@@ -9,7 +9,7 @@ import 'music_playlist_state.dart';
 class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
   // int index = 0;
 
-  late List musicModel = [];
+  late List<SongModel> musicModel = [];
   bool onTapPauseGlobal = true;
   int indexMusic = 0;
   OnAudioQuery _audioQuery = OnAudioQuery();
@@ -23,11 +23,11 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       uriType: UriType.EXTERNAL,
       ignoreCase: true,            
     );
-    musicModel = musicModels;
+    // musicModel = musicModels;
 
-    // await Future.delayed(
-    //   const Duration(milliseconds: 1500),
-    // );
+    await Future.delayed(
+      const Duration(milliseconds: 1500),
+    );
     emit(
       MusicPlaylistLaded(
         musicList: musicModel,
@@ -35,7 +35,7 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     );
   }
 
-  void onTapMusicItem({required MusicModel music, required int index}) {
+  void onTapMusicItem({required SongModel music, required int index}) {
     indexMusic = index;
     emit(
       MusicPlaylistLaded(
@@ -64,7 +64,7 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
   }
 
   void onTapLeftBack({
-    required MusicModel selectMusic,
+    required SongModel selectMusic,
     required int selectionIndex,
   }) {
     if (selectionIndex > 0 && selectionIndex < musicModel.length) {
@@ -79,7 +79,7 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     }
   }
 
-  void onTapNext({required MusicModel selectMusic, required int selectionIndex}) {
+  void onTapNext({required SongModel selectMusic, required int selectionIndex}) {
     if (selectionIndex >= 0 && selectionIndex < musicModel.length - 1) {
       selectionIndex += 1;
       emit(

@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_player/src/core/db/local_database.dart';
 import 'package:music_player/src/core/model/music_model.dart';
 import 'package:music_player/src/my_playlist/presentation/widgets/repeat_icon.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../../assets/app_colors.dart';
 import '../../../assets/app_text_styles.dart';
@@ -21,7 +22,7 @@ import 'custom_on_tap_icon_widget.dart';
 class CustomAppBar extends StatefulWidget {
   bool onTap;
   int index;
-  MusicModel musicModel;
+  SongModel musicModel;
   // bool onTapPause;
 
   CustomAppBar({
@@ -103,7 +104,7 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                               return NowPlaying(
                                 initialValue: widget.index,
                                 // onTap: widget.onTapPause,
-                                musicList: musicModels,
+                                musicList: state.musicList,
                                 // onTapPause: context.read<MusicPlaylistCubit>().onTapPauseGlobal,
                               );
                             },
@@ -136,11 +137,11 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      SongWidget(text: widget.musicModel.musicName),
+                                      SongWidget(text: widget.musicModel.title),
                                       SizedBox(
                                         height: 8.h,
                                       ),
-                                      SongWidget(text: widget.musicModel.songWriterName),
+                                      SongWidget(text: widget.musicModel.artist),
                                     ],
                                   ),
                                   CustomOnTapIconWidget(

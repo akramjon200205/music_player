@@ -9,6 +9,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../../assets/app_text_styles.dart';
 import '../../../assets/assets.dart';
+import '../../../now_playing/presentation/widgets/duration_music.dart';
 
 // ignore: must_be_immutable
 class CustomContainerWidget extends StatelessWidget {
@@ -66,8 +67,8 @@ class CustomContainerWidget extends StatelessWidget {
                             id: musicModel.id,
                             type: ArtworkType.AUDIO,
                             artworkBorder: BorderRadius.circular(10.r),
-                            imageSized: 28.h,
                             artworkFit: BoxFit.fill,
+                            // imageSized: 28.h,
                           ),
                           // Image.asset(
                           //   musicModel.image ?? Assets.icons.musicNote,
@@ -121,7 +122,7 @@ class CustomContainerWidget extends StatelessWidget {
                 child: boolean()
                     ? SvgPicture.asset(Assets.icons.soundWave)
                     : Text(
-                        "3:14",
+                        formatTime(musicModel),
                         style: AppTextStyles.body16w4,
                       ),
               ),

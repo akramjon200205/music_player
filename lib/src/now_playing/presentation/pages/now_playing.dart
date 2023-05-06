@@ -10,15 +10,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:music_player/src/core/model/music_model.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../../assets/app_colors.dart';
 import '../../../assets/app_text_styles.dart';
 import '../../../assets/assets.dart';
 import '../../../my_playlist/presentation/widgets/custom_on_tap_icon_widget.dart';
+import '../widgets/duration_music.dart';
 
 // ignore: must_be_immutable
 class NowPlaying extends StatefulWidget {
-  List<MusicModel> musicList;
+  List<SongModel> musicList;
   int initialValue;
   // bool onTap;
   // bool onTapPause;
@@ -122,10 +124,17 @@ class _NowPlayingState extends State<NowPlaying> {
                                     borderRadius: BorderRadius.circular(25.r),
                                     color: const Color(0xff1A1335).withOpacity(0.5),
                                   ),
-                                  child: Image.asset(
-                                    widget.musicList[index].image!,
-                                    fit: BoxFit.cover,
+                                  child: QueryArtworkWidget(
+                                    id: widget.musicList[index].id,
+                                    type: ArtworkType.AUDIO,
+                                    artworkBorder: BorderRadius.circular(10.r),
+                                    // imageSized: 28.h,
+                                    artworkFit: BoxFit.fill,
                                   ),
+                                  // Image.asset(
+                                  //   widget.musicList[index].image!,
+                                  //   fit: BoxFit.cover,
+                                  // ),
                                 );
                               },
                             ),
@@ -141,7 +150,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                 width: 250.w,
                                 height: 30.h,
                                 child: Text(
-                                  widget.musicList[widget.initialValue].musicName ?? "unknown",
+                                  widget.musicList[widget.initialValue].title ?? "unknown",
                                   style: AppTextStyles.body24w4,
                                 ),
                               ),
@@ -150,7 +159,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                 width: 200.w,
                                 height: 30.h,
                                 child: Text(
-                                  widget.musicList[widget.initialValue].songWriterName ?? "unknown",
+                                  widget.musicList[widget.initialValue].artist ?? "unknown",
                                   style: AppTextStyles.body18w4,
                                 ),
                               ),
@@ -194,11 +203,11 @@ class _NowPlayingState extends State<NowPlaying> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          widget.musicList[widget.initialValue].time ?? '00:00',
+                                        formatTime(widget.musicList[widget.initialValue]) ?? '00:00',
                                           style: AppTextStyles.body14w4,
                                         ),
                                         Text(
-                                          widget.musicList[widget.initialValue].time ?? "00:00",
+                                          formatTime(widget.musicList[widget.initialValue]) ?? "00:00",
                                           style: AppTextStyles.body14w4,
                                         ),
                                       ],
