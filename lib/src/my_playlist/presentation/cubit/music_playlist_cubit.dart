@@ -15,6 +15,8 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
   OnAudioQuery _audioQuery = OnAudioQuery();
   MusicPlaylistCubit() : super(MusicPlaylistInitial());
 
+
+
   void downloadMusics() async {
     emit(MusicPlaylistLoading());
     musicModel = await _audioQuery.querySongs(
@@ -37,6 +39,11 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
 
   void onTapMusicItem({required SongModel music, required int index}) {
     indexMusic = index;
+  try{
+    
+  }on Exception {
+
+  }
     emit(
       MusicPlaylistLaded(
         musicList: musicModel,

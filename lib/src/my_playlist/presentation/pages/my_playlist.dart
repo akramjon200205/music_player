@@ -1,11 +1,11 @@
 // import 'package:audioplayers/audioplayers.dart';
 import 'dart:developer';
 
-import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:just_audio/just_audio.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:music_player/src/assets/app_colors.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
@@ -24,7 +24,7 @@ class MyPlayList extends StatefulWidget {
 }
 
 class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
-  final AudioPlayer audioPlayer = AudioPlayer();
+  late final AudioPlayer audioPlayer;
   final OnAudioQuery onAudioQuery = OnAudioQuery();
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
@@ -39,19 +39,16 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
     super.initState();
     Permission.storage.request();
     controller = AnimationController(vsync: this);
-    controller.duration = const Duration(milliseconds: 800);    
+    controller.duration = const Duration(milliseconds: 800);
+    audioPlayer = AudioPlayer();
   }
 
-  // playSong() {
-  //   try {
-  //     audioPlayer
-  //         .setAudioSource(AudioSource.uri(Uri.parse(widget.songModel.uri!)));
-  //     audioPlayer.play();
-  //     playing = true;
-  //   } on Exception {
-  //     log('Cannot Parse song');
-  //   }
-  // }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    audioPlayer.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,10 +85,8 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () async {
-                              if (state.index != index) {
-                                // audioPlayer.play(
-                                //   AssetSource("assets/serena_safari_remix.mp3"),
-                                // );
+                              if (state.index != index) {                                
+                                
                                 context.read<MusicPlaylistCubit>().onTapMusicItem(
                                       music: state.musicList[index],
                                       index: index,

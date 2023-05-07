@@ -26,12 +26,14 @@ class MusicPlaylistLaded extends MusicPlaylistState {
   MusicPlaylistLaded({
     required this.musicList,
     this.musicModel,
-     this.index = 0, 
+    this.index = 0,
     this.isPlay = false,
   });
 
   @override
   List<Object> get props => [musicList, index];
 }
+
+class MusicPlayListPlay extends MusicPlaylistState {}
 
 class MusicPlaylistError extends MusicPlaylistState {}
