@@ -13,22 +13,18 @@ import '../../../now_playing/presentation/widgets/duration_music.dart';
 
 // ignore: must_be_immutable
 class CustomContainerWidget extends StatelessWidget {
-  bool onTap;
-  bool onTapPause;
+  bool isActive;
   SongModel musicModel;
 
   CustomContainerWidget({
     Key? key,
-    required this.onTap,
-    required this.onTapPause,
+    required this.isActive,
     required this.musicModel,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool boolean() {
-      return onTap;
-    }
+    
 
     return Column(
       children: [
@@ -38,7 +34,7 @@ class CustomContainerWidget extends StatelessWidget {
           padding: EdgeInsets.only(left: 10.w, right: 16.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.r),
-            color: onTap ? Colors.white.withOpacity(0.3) : Colors.white.withOpacity(0.15),
+            color: isActive ? Colors.white.withOpacity(0.3) : Colors.white.withOpacity(0.15),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,11 +64,8 @@ class CustomContainerWidget extends StatelessWidget {
                             type: ArtworkType.AUDIO,
                             artworkBorder: BorderRadius.circular(10.r),
                             artworkFit: BoxFit.fill,
-                            // imageSized: 28.h,
-                          ),
-                          // Image.asset(
-                          //   musicModel.image ?? Assets.icons.musicNote,
-                          // ),
+                            imageSized: 28.h,
+                          ),                          
                         ),
                         // boolean()
                         //     ? PlayAndPauseWidget(
@@ -92,7 +85,7 @@ class CustomContainerWidget extends StatelessWidget {
                       SizedBox(
                         width: 150.w,
                         child: Text(
-                          musicModel.title ?? "unknown",
+                          musicModel.title ,
                           style: AppTextStyles.body16w4,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -119,7 +112,7 @@ class CustomContainerWidget extends StatelessWidget {
               Container(
                 width: 40.w,
                 alignment: Alignment.center,
-                child: boolean()
+                child:isActive
                     ? SvgPicture.asset(Assets.icons.soundWave)
                     : Text(
                         formatTime(musicModel),

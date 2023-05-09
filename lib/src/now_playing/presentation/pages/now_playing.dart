@@ -20,17 +20,11 @@ import '../widgets/duration_music.dart';
 
 // ignore: must_be_immutable
 class NowPlaying extends StatefulWidget {
-  List<SongModel> musicList;
   int initialValue;
-  // bool onTap;
-  // bool onTapPause;
 
   NowPlaying({
     Key? key,
-    required this.musicList,
     required this.initialValue,
-    // required this.onTap,
-    // required this.onTapPause,
   }) : super(key: key);
 
   @override
@@ -41,8 +35,10 @@ class _NowPlayingState extends State<NowPlaying> {
   final CarouselController _carouselController = CarouselController();
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
+
   @override
   Widget build(BuildContext context) {
+    final contextRead = context.read<MusicPlaylistCubit>();
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -100,7 +96,8 @@ class _NowPlayingState extends State<NowPlaying> {
                     if (state is MusicPlaylistLaded) {
                       return Column(
                         children: [
-                          CarouselSlider(
+                          CarouselSlider.builder(
+                            itemCount: context.read<MusicPlaylistCubit>().musicModel.length,
                             carouselController: _carouselController,
                             options: CarouselOptions(
                               aspectRatio: 1.5,
@@ -114,30 +111,23 @@ class _NowPlayingState extends State<NowPlaying> {
                               autoPlay: false,
                               scrollPhysics: const BouncingScrollPhysics(),
                             ),
-                            items: List.generate(
-                              widget.musicList.length,
-                              (index) {
-                                return Container(
-                                  height: 280.w,
-                                  width: 280.w,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(25.r),
-                                    color: const Color(0xff1A1335).withOpacity(0.5),
-                                  ),
-                                  child: QueryArtworkWidget(
-                                    id: widget.musicList[index].id,
-                                    type: ArtworkType.AUDIO,
-                                    artworkBorder: BorderRadius.circular(10.r),
-                                    // imageSized: 28.h,
-                                    artworkFit: BoxFit.fill,
-                                  ),
-                                  // Image.asset(
-                                  //   widget.musicList[index].image!,
-                                  //   fit: BoxFit.cover,
-                                  // ),
-                                );
-                              },
-                            ),
+                            itemBuilder: (context, index, realIndex) {
+                              return Container(
+                                height: 280.w,
+                                width: 280.w,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(40.r),
+                                  color: const Color(0xff1A1335).withOpacity(0.5),
+                                ),
+                                child: QueryArtworkWidget(
+                                  id: contextRead.musicModel[index].id,
+                                  type: ArtworkType.AUDIO,
+                                  artworkBorder: BorderRadius.circular(40.r),
+                                  artworkFit: BoxFit.fill,
+                                  imageSized: 250.h,
+                                ),
+                              );
+                            },
                           ),
                           SizedBox(
                             height: 70.h,
@@ -150,7 +140,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                 width: 250.w,
                                 height: 30.h,
                                 child: Text(
-                                  widget.musicList[widget.initialValue].title ?? "unknown",
+                                  contextRead.musicModel[widget.initialValue].title,
                                   style: AppTextStyles.body24w4,
                                 ),
                               ),
@@ -159,7 +149,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                 width: 200.w,
                                 height: 30.h,
                                 child: Text(
-                                  widget.musicList[widget.initialValue].artist ?? "unknown",
+                                  contextRead.musicModel[widget.initialValue].artist ?? "unknown",
                                   style: AppTextStyles.body18w4,
                                 ),
                               ),
@@ -203,11 +193,11 @@ class _NowPlayingState extends State<NowPlaying> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                        formatTime(widget.musicList[widget.initialValue]) ?? '00:00',
+                                          formatTime(contextRead.musicModel[widget.initialValue]),
                                           style: AppTextStyles.body14w4,
                                         ),
                                         Text(
-                                          formatTime(widget.musicList[widget.initialValue]) ?? "00:00",
+                                          formatTime(contextRead.musicModel[widget.initialValue]),
                                           style: AppTextStyles.body14w4,
                                         ),
                                       ],
@@ -270,7 +260,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                     ),
                                     CustomOnTapIconWidget(
                                       function: () {
-                                        if (widget.initialValue < widget.musicList.length) {
+                                        if (widget.initialValue < contextRead.musicModel.length) {
                                           widget.initialValue = widget.initialValue + 1;
                                           _carouselController.animateToPage(
                                             widget.initialValue + 1,

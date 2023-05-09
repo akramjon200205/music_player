@@ -17,17 +17,16 @@ import '../../../now_playing/presentation/pages/now_playing.dart';
 import '../cubit/music_playlist_cubit.dart';
 import '../cubit/music_playlist_state.dart';
 import 'custom_on_tap_icon_widget.dart';
+import 'custom_slider.dart';
 
 // ignore: must_be_immutable
 class CustomAppBar extends StatefulWidget {
-  bool onTap;
   int index;
   SongModel musicModel;
   // bool onTapPause;
 
   CustomAppBar({
     Key? key,
-    required this.onTap,
     required this.index,
     required this.musicModel,
   }) : super(key: key);
@@ -103,9 +102,6 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                             builder: (context) {
                               return NowPlaying(
                                 initialValue: widget.index,
-                                // onTap: widget.onTapPause,
-                                musicList: state.musicList,
-                                // onTapPause: context.read<MusicPlaylistCubit>().onTapPauseGlobal,
                               );
                             },
                           );
@@ -126,10 +122,7 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                                 children: [
                                   CustomOnTapIconWidget(
                                     function: () {
-                                      context.read<MusicPlaylistCubit>().onTapLeftBack(
-                                            selectMusic: widget.musicModel,
-                                            selectionIndex: widget.index,
-                                          );
+                                      context.read<MusicPlaylistCubit>().onTapLeftBack();
                                     },
                                     textAssetsIcon: Assets.icons.prevLeft,
                                   ),
@@ -148,14 +141,13 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                                     function: () {
                                       context.read<MusicPlaylistCubit>().onTapPause();
                                     },
-                                    textAssetsIcon: state.isPlay ? Assets.icons.playMusic : Assets.icons.pause,
+                                    textAssetsIcon: context.watch<MusicPlaylistCubit>().isPlaying
+                                        ? Assets.icons.pause
+                                        : Assets.icons.playMusic,
                                   ),
                                   CustomOnTapIconWidget(
                                     function: () {
-                                      context.read<MusicPlaylistCubit>().onTapNext(
-                                            selectMusic: widget.musicModel,
-                                            selectionIndex: widget.index,
-                                          );
+                                      context.read<MusicPlaylistCubit>().onTapNext();
                                     },
                                     textAssetsIcon: Assets.icons.nextRight,
                                   ),
@@ -166,38 +158,7 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 6.w,
-                      width: double.infinity,
-                      child: SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: const Color(0xff191234),
-                          inactiveTrackColor: Colors.white.withOpacity(0.5),
-                          activeTickMarkColor: Colors.white.withOpacity(0.5),
-                          trackShape: const RectangularSliderTrackShape(),
-                          trackHeight: 4,
-                          thumbColor: const Color(0xff191234),
-                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
-                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 0.0),
-                        ),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: Slider(
-                            min: 0,
-                            max: 100,
-                            divisions: 100,
-                            value: valueSlider,
-                            onChanged: (value) {
-                              setState(
-                                () {
-                                  valueSlider = value;
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    )
+                    const CustomSlider(),
                   ],
                 ),
               );

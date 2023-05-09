@@ -21,13 +21,11 @@ class MusicPlaylistLaded extends MusicPlaylistState {
   List<SongModel> musicList;
   SongModel? musicModel;
   int index;
-  bool isPlay;
 
   MusicPlaylistLaded({
     required this.musicList,
     this.musicModel,
     this.index = 0,
-    this.isPlay = false,
   });
 
   @override
@@ -36,4 +34,7 @@ class MusicPlaylistLaded extends MusicPlaylistState {
 
 class MusicPlayListPlay extends MusicPlaylistState {}
 
-class MusicPlaylistError extends MusicPlaylistState {}
+class MusicPlaylistError extends MusicPlaylistState {
+  final String message;
+  const MusicPlaylistError({required this.message});
+}

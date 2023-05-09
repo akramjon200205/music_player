@@ -1,5 +1,6 @@
 // import 'package:audioplayers/audioplayers.dart';
 import 'dart:developer';
+import 'dart:ffi';
 
 // import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -24,30 +25,23 @@ class MyPlayList extends StatefulWidget {
 }
 
 class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
-  late final AudioPlayer audioPlayer;
-  final OnAudioQuery onAudioQuery = OnAudioQuery();
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
-  bool onTap = true;
-  bool isPlaying = false;
-  bool onTapPause = true;
-  // final music = "serena_safari_remix.mp3";
   late AnimationController controller;
+  AudioPlayer audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     Permission.storage.request();
-    controller = AnimationController(vsync: this);
-    controller.duration = const Duration(milliseconds: 800);
-    audioPlayer = AudioPlayer();
+    controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    context.read<MusicPlaylistCubit>().setAudioPlayer(audioPlayer);
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     audioPlayer.dispose();
+    super.dispose();
   }
 
   @override
@@ -73,6 +67,10 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
+                } else if (state is MusicPlaylistError) {
+                  return Center(
+                    child: Text(state.message),
+                  );
                 } else if (state is MusicPlaylistLaded) {
                   return SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
@@ -85,8 +83,7 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () async {
-                              if (state.index != index) {                                
-                                
+                              if (state.index != index) {
                                 context.read<MusicPlaylistCubit>().onTapMusicItem(
                                       music: state.musicList[index],
                                       index: index,
@@ -98,22 +95,15 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                                   context: context,
                                   builder: (context) {
                                     return NowPlaying(
-                                      initialValue: index,
-                                      musicList: state.musicList,
+                                      initialValue: index,                                      
                                     );
                                   },
-                                );
-                                // if (state.onTap == true) {
-
-                                // } else {
-
-                                // }
+                                );                                
                               }
                             },
                             child: CustomContainerWidget(
                               musicModel: state.musicList[index],
-                              onTap: state.index == index,
-                              onTapPause: state.isPlay,
+                              isActive: state.index == index,
                             ),
                           );
                         },
@@ -137,8 +127,6 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
               builder: (context, state) {
                 if (state is MusicPlaylistLaded) {
                   return CustomAppBar(
-                    // onTapPause: state.musicList[state.index] != state.musicModel,
-                    onTap: state.isPlay,
                     index: state.index,
                     musicModel: state.musicModel ?? state.musicList[state.index],
                   );
