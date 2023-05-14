@@ -17,12 +17,12 @@ class MusicPlaylistInitial extends MusicPlaylistState {}
 class MusicPlaylistLoading extends MusicPlaylistState {}
 
 // ignore: must_be_immutable
-class MusicPlaylistLaded extends MusicPlaylistState {
+class MusicPlaylistLoaded extends MusicPlaylistState {
   List<SongModel> musicList;
   SongModel? musicModel;
   int index;
 
-  MusicPlaylistLaded({
+  MusicPlaylistLoaded({
     required this.musicList,
     this.musicModel,
     this.index = 0,

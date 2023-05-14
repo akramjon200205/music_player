@@ -1,22 +1,23 @@
-import 'dart:developer';
+import 'dart:developer' as developer;
 
-import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:music_player/src/now_playing/presentation/pages/now_playing.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import '../../../core/db/local_database.dart';
-import '../../../core/model/music_model.dart';
 import 'music_playlist_state.dart';
+import 'dart:math';
 
 class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
   // int index = 0;
 
   late List<SongModel> musicModel = [];
-  bool onTapPauseGlobal = true;
   int indexMusic = 0;
+  bool onTaprepeat = false;
   bool isPlaying = false;
   OnAudioQuery audioQuery = OnAudioQuery();
+  CarouselController carouselController = CarouselController();
+    
+
   late final AudioPlayer audioPlayer;
   MusicPlaylistCubit() : super(MusicPlaylistInitial());
 
@@ -28,11 +29,8 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       uriType: UriType.EXTERNAL,
       ignoreCase: true,
     );
-    // await Future.delayed(
-    //   const Duration(milliseconds: 1500),
-    // );
     emit(
-      MusicPlaylistLaded(
+      MusicPlaylistLoaded(
         musicList: musicModel,
       ),
     );
@@ -45,11 +43,11 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       audioPlayer.play();
       isPlaying = true;
     } on Exception {
-      log("sorry");
+      developer.log("sorry");
       emit(const MusicPlaylistError(message: "Sorry"));
     }
     emit(
-      MusicPlaylistLaded(
+      MusicPlaylistLoaded(
         musicList: musicModel,
         musicModel: music,
         index: index,
@@ -57,30 +55,11 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     );
   }
 
-  Future<void> stop() async {
-    // audioPlayer.stop();
-    // emit(
-    //   MusicPlaylistLaded(
-    //     musicList: musicModel,
-    //   ),
-    // );
-  }
   void onSeekMusic(Duration duration) {
     audioPlayer.seek(duration);
-    // audioPlayer.play();
   }
 
   void onTapPause() {
-    // if (indexMusic == 0) {
-    //   try {
-    //     audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
-    //     audioPlayer.play();
-    //     isPlaying = true;
-    //   } on Exception {
-    //     log("sorry");
-    //     emit(const MusicPlaylistError(message: "Sorry"));
-    //   }
-    // } else 
     if (isPlaying) {
       isPlaying = false;
       audioPlayer.stop();
@@ -88,9 +67,10 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       isPlaying = true;
       audioPlayer.play();
     }
+
     emit(MusicPlaylistLoading());
     emit(
-      MusicPlaylistLaded(
+      MusicPlaylistLoaded(
         musicList: musicModel,
         musicModel: musicModel[indexMusic],
         index: indexMusic,
@@ -108,7 +88,29 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
     audioPlayer.play();
     emit(
-      MusicPlaylistLaded(
+      MusicPlaylistLoaded(
+        musicList: musicModel,
+        musicModel: musicModel[indexMusic],
+        index: indexMusic,
+      ),
+    );
+  }
+
+  void onTapLeftBackNowPlaying() {
+    audioPlayer.seekToNext();
+    indexMusic--;
+    if (indexMusic < 0) {
+      indexMusic = musicModel.length - 1;
+    }
+    carouselController.animateToPage(
+      indexMusic,
+      duration: const Duration(milliseconds: 800),
+    );
+    isPlaying = true;
+    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer.play();
+    emit(
+      MusicPlaylistLoaded(
         musicList: musicModel,
         musicModel: musicModel[indexMusic],
         index: indexMusic,
@@ -126,25 +128,99 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
     audioPlayer.play();
     emit(
-      MusicPlaylistLaded(
+      MusicPlaylistLoaded(
         musicList: musicModel,
         musicModel: musicModel[indexMusic],
         index: indexMusic,
       ),
-    );    
+    );
   }
 
-  playSong(SongModel music) {
-    try {
-      audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(music.uri!)));
-      audioPlayer.play();
+  void onTapNextNowPlaying() {
+    audioPlayer.seekToNext();
+    indexMusic++;
+    if (indexMusic > musicModel.length - 1) {
+      indexMusic = 0;
+    }
+    carouselController.animateToPage(
+      indexMusic,
+      duration: const Duration(milliseconds: 800),
+    );
+    isPlaying = true;
+    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer.play();
+    emit(
+      MusicPlaylistLoaded(
+        musicList: musicModel,
+        musicModel: musicModel[indexMusic],
+        index: indexMusic,
+      ),
+    );
+  }
+
+  onNextMusicPLay(double duration) {
+    final durationTime = Duration(
+      milliseconds: (audioPlayer.duration == null ? 1 : audioPlayer.duration!.inMilliseconds * duration / 100).toInt(),
+    );
+    if (durationTime == audioPlayer.duration) {
+      audioPlayer.seekToNext();
+      indexMusic++;
+      if (indexMusic > musicModel.length - 1) {
+        indexMusic = 0;
+      }
       isPlaying = true;
-    } on Exception {
-      log('Cannot Parse song');
+      audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+      audioPlayer.play();
+      emit(
+        MusicPlaylistLoaded(
+          musicList: musicModel,
+          musicModel: musicModel[indexMusic],
+          index: indexMusic,
+        ),
+      );
     }
   }
 
   void setAudioPlayer(AudioPlayer audioPlayer) {
     this.audioPlayer = audioPlayer;
   }
+
+  void repeatFunc() {
+    if (onTaprepeat == true) {
+      audioPlayer.setLoopMode(LoopMode.one);
+      onTaprepeat = false;
+    } else {
+      audioPlayer.setLoopMode(LoopMode.all);
+      onTaprepeat = true;
+    }
+    emit(
+      MusicPlaylistLoading(),
+    );
+    emit(
+      MusicPlaylistLoaded(
+        musicList: musicModel,
+        musicModel: musicModel[indexMusic],
+        index: indexMusic,
+      ),
+    );
+  }
+
+  void randomMusicPlay() async {
+    var random = Random();
+    indexMusic = random.nextInt(musicModel.length);
+    carouselController.animateToPage(
+      indexMusic,
+      duration: const Duration(milliseconds: 800),
+    );
+    isPlaying = true;
+    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer.play();
+    emit(
+      MusicPlaylistLoaded(
+        musicList: musicModel,
+        musicModel: musicModel[indexMusic],
+        index: indexMusic,
+      ),
+    );
+  }  
 }

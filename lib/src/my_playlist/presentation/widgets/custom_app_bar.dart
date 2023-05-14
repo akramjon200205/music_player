@@ -23,7 +23,6 @@ import 'custom_slider.dart';
 class CustomAppBar extends StatefulWidget {
   int index;
   SongModel musicModel;
-  // bool onTapPause;
 
   CustomAppBar({
     Key? key,
@@ -44,11 +43,6 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
     super.initState();
     controller = AnimationController(vsync: this);
     controller.duration = const Duration(milliseconds: 800);
-  }
-
-  Future<void> sliderValue() async {
-    const Duration(seconds: 1);
-    valueSlider = valueSlider++;
   }
 
   @override
@@ -86,81 +80,75 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
           builder: (context, state) {
             if (state is MusicPlaylistLoading) {
               return const SizedBox.shrink();
-            } else if (state is MusicPlaylistLaded) {
-              return SizedBox(
-                height: 103.h,
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: GestureDetector(
-                        onTap: () {
-                          showBottomSheet(
-                            elevation: 0,
-                            context: context,
-                            transitionAnimationController: controller,
-                            builder: (context) {
-                              return NowPlaying(
-                                initialValue: widget.index,
-                              );
-                            },
-                          );
-                        },
-                        child: ClipRect(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Container(
-                              height: 98.h,
-                              padding: EdgeInsets.symmetric(horizontal: 28.w),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.3),
+            } else if (state is MusicPlaylistLoaded) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // CustomSlider(
+                  //   activeTrackColor: const Color(0xff191234),
+                  //   thumbColor: const Color(0xff191234),
+                  // ),
+                  GestureDetector(
+                    onTap: () {
+                      playerBottomSheet(context);
+                    },
+                    child: ClipRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: Container(
+                          height: 98.h,
+                          padding: EdgeInsets.symmetric(horizontal: 28.w),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CustomOnTapIconWidget(
+                                function: () {
+                                  context.read<MusicPlaylistCubit>().onTapLeftBack();
+                                },
+                                textAssetsIcon: Assets.icons.prevLeft,
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                              RepeatIcon(
+                                function: () {
+                                  context.read<MusicPlaylistCubit>().repeatFunc();
+                                },
+                                onTap: context.read<MusicPlaylistCubit>().onTaprepeat,
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CustomOnTapIconWidget(
-                                    function: () {
-                                      context.read<MusicPlaylistCubit>().onTapLeftBack();
-                                    },
-                                    textAssetsIcon: Assets.icons.prevLeft,
+                                  SongWidget(text: widget.musicModel.title),
+                                  SizedBox(
+                                    height: 8.h,
                                   ),
-                                  const RepeatIcon(),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SongWidget(text: widget.musicModel.title),
-                                      SizedBox(
-                                        height: 8.h,
-                                      ),
-                                      SongWidget(text: widget.musicModel.artist),
-                                    ],
-                                  ),
-                                  CustomOnTapIconWidget(
-                                    function: () {
-                                      context.read<MusicPlaylistCubit>().onTapPause();
-                                    },
-                                    textAssetsIcon: context.watch<MusicPlaylistCubit>().isPlaying
-                                        ? Assets.icons.pause
-                                        : Assets.icons.playMusic,
-                                  ),
-                                  CustomOnTapIconWidget(
-                                    function: () {
-                                      context.read<MusicPlaylistCubit>().onTapNext();
-                                    },
-                                    textAssetsIcon: Assets.icons.nextRight,
-                                  ),
+                                  SongWidget(text: widget.musicModel.artist),
                                 ],
                               ),
-                            ),
+                              CustomOnTapIconWidget(
+                                function: () {
+                                  context.read<MusicPlaylistCubit>().onTapPause();
+                                },
+                                textAssetsIcon: context.watch<MusicPlaylistCubit>().isPlaying
+                                    ? Assets.icons.pause
+                                    : Assets.icons.playMusic,
+                              ),
+                              CustomOnTapIconWidget(
+                                function: () {
+                                  context.read<MusicPlaylistCubit>().onTapNext();
+                                },
+                                textAssetsIcon: Assets.icons.nextRight,
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                    const CustomSlider(),
-                  ],
-                ),
+                  ),
+                ],
               );
             } else {
               return const SizedBox.shrink();
@@ -169,6 +157,17 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
         ),
       ],
     );
+  }
+
+  PersistentBottomSheetController<dynamic> playerBottomSheet(BuildContext context) {
+    return showBottomSheet(
+                      elevation: 0,
+                      context: context,
+                      transitionAnimationController: controller,
+                      builder: (context) {
+                        return const NowPlaying();
+                      },
+                    );
   }
 }
 

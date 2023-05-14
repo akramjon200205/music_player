@@ -10,9 +10,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_player/src/assets/app_colors.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../../core/db/local_database.dart';
 import '../../../now_playing/presentation/pages/now_playing.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_container_widget.dart';
@@ -26,7 +24,6 @@ class MyPlayList extends StatefulWidget {
 
 class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
   Duration duration = Duration.zero;
-  Duration position = Duration.zero;
   late AnimationController controller;
   AudioPlayer audioPlayer = AudioPlayer();
 
@@ -71,7 +68,7 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                   return Center(
                     child: Text(state.message),
                   );
-                } else if (state is MusicPlaylistLaded) {
+                } else if (state is MusicPlaylistLoaded) {
                   return SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
                     child: SizedBox(
@@ -88,17 +85,15 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                                       music: state.musicList[index],
                                       index: index,
                                     );
-                              } else if (state.index == index) {
+                              } else if (state.index == index) {                                
                                 showBottomSheet(
                                   transitionAnimationController: controller,
                                   elevation: 0,
                                   context: context,
                                   builder: (context) {
-                                    return NowPlaying(
-                                      initialValue: index,                                      
-                                    );
+                                    return const NowPlaying();
                                   },
-                                );                                
+                                );
                               }
                             },
                             child: CustomContainerWidget(
@@ -125,7 +120,7 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
             ),
             BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
               builder: (context, state) {
-                if (state is MusicPlaylistLaded) {
+                if (state is MusicPlaylistLoaded) {
                   return CustomAppBar(
                     index: state.index,
                     musicModel: state.musicModel ?? state.musicList[state.index],

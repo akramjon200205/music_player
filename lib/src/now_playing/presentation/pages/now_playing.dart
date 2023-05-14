@@ -6,25 +6,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:music_player/src/core/model/music_model.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
+import 'package:music_player/src/my_playlist/presentation/widgets/repeat_icon.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../../assets/app_colors.dart';
 import '../../../assets/app_text_styles.dart';
 import '../../../assets/assets.dart';
 import '../../../my_playlist/presentation/widgets/custom_on_tap_icon_widget.dart';
+import '../../../my_playlist/presentation/widgets/custom_slider.dart';
 import '../widgets/duration_music.dart';
 
-// ignore: must_be_immutable
 class NowPlaying extends StatefulWidget {
-  int initialValue;
-
-  NowPlaying({
+  const NowPlaying({
     Key? key,
-    required this.initialValue,
   }) : super(key: key);
 
   @override
@@ -33,8 +30,30 @@ class NowPlaying extends StatefulWidget {
 
 class _NowPlayingState extends State<NowPlaying> {
   final CarouselController _carouselController = CarouselController();
-  Duration duration = Duration.zero;
-  Duration position = Duration.zero;
+
+  // AudioPlayer audioPlayer = AudioPlayer();
+  int sliderPosition = 0;
+  late final AudioPlayer audioPlayer;
+  @override
+  void initState() {
+    audioPlayer = context.read<MusicPlaylistCubit>().audioPlayer;
+    audioPlayer.positionStream.listen((event) {
+      setState(() {
+        sliderPosition = event.inSeconds.toInt();
+      });
+    });
+
+    super.initState();
+  }
+
+  String songPosition() {
+    int minutes = sliderPosition ~/ 60;
+    int seconds = sliderPosition % 60;
+    if (seconds ~/ 10 < 1) {
+      return '$minutes : 0$seconds';
+    }
+    return '$minutes : $seconds';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,25 +110,37 @@ class _NowPlayingState extends State<NowPlaying> {
                 SizedBox(
                   height: 60.h,
                 ),
+                // BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
+                //   builder: (context, state) {
+                //     if (state is MusicPlaylistLoaded) {
+                //       return
+                //     } else {
+                //       return const SizedBox.shrink();
+                //     }
+                //   },
+                // ),
                 BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
                   builder: (context, state) {
-                    if (state is MusicPlaylistLaded) {
+                    if (state is MusicPlaylistLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (state is MusicPlaylistLoaded) {
                       return Column(
                         children: [
                           CarouselSlider.builder(
                             itemCount: context.read<MusicPlaylistCubit>().musicModel.length,
-                            carouselController: _carouselController,
+                            carouselController: context.read<MusicPlaylistCubit>().carouselController,
                             options: CarouselOptions(
                               aspectRatio: 1.5,
-                              onPageChanged: (value, reason) {
-                                widget.initialValue = value;
-                              },
+                              reverse: false,
                               enlargeCenterPage: true,
                               enableInfiniteScroll: false,
                               enlargeStrategy: CenterPageEnlargeStrategy.height,
-                              initialPage: widget.initialValue,
+                              initialPage: contextRead.indexMusic,
                               autoPlay: false,
-                              scrollPhysics: const BouncingScrollPhysics(),
+                              scrollPhysics: const NeverScrollableScrollPhysics(),
                             ),
                             itemBuilder: (context, index, realIndex) {
                               return Container(
@@ -140,7 +171,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                 width: 250.w,
                                 height: 30.h,
                                 child: Text(
-                                  contextRead.musicModel[widget.initialValue].title,
+                                  contextRead.musicModel[contextRead.indexMusic].title,
                                   style: AppTextStyles.body24w4,
                                 ),
                               ),
@@ -149,7 +180,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                 width: 200.w,
                                 height: 30.h,
                                 child: Text(
-                                  contextRead.musicModel[widget.initialValue].artist ?? "unknown",
+                                  contextRead.musicModel[contextRead.indexMusic].artist ?? "unknown",
                                   style: AppTextStyles.body18w4,
                                 ),
                               ),
@@ -158,54 +189,32 @@ class _NowPlayingState extends State<NowPlaying> {
                               ),
                             ],
                           ),
-                          BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
-                            builder: (context, state) {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 30.w),
-                                child: Column(
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 30.w),
+                            child: Column(
+                              children: [
+                                CustomSlider(
+                                  activeTrackColor: Colors.white,
+                                  thumbColor: Colors.white,
+                                ),
+                                SizedBox(
+                                  height: 4.h,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    SliderTheme(
-                                      data: SliderTheme.of(context).copyWith(
-                                        activeTrackColor: Colors.white,
-                                        inactiveTrackColor: Colors.white.withOpacity(0.5),
-                                        activeTickMarkColor: Colors.white.withOpacity(0.5),
-                                        trackShape: const RectangularSliderTrackShape(),
-                                        trackHeight: 4,
-                                        thumbColor: Colors.white,
-                                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
-                                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 0.0),
-                                      ),
-                                      child: SizedBox(
-                                        child: Slider(
-                                          min: 0,
-                                          max: duration.inSeconds.toDouble(),
-                                          value: position.inSeconds.toDouble(),
-                                          onChanged: (value) {
-                                            // final position = Duration(seconds: value.toInt());
-                                          },
-                                        ),
-                                      ),
+                                    Text(
+                                      songPosition(),
+                                      style: AppTextStyles.body14w4,
                                     ),
-                                    SizedBox(
-                                      height: 4.h,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          formatTime(contextRead.musicModel[widget.initialValue]),
-                                          style: AppTextStyles.body14w4,
-                                        ),
-                                        Text(
-                                          formatTime(contextRead.musicModel[widget.initialValue]),
-                                          style: AppTextStyles.body14w4,
-                                        ),
-                                      ],
+                                    Text(
+                                      formatTime(contextRead.musicModel[contextRead.indexMusic]),
+                                      style: AppTextStyles.body14w4,
                                     ),
                                   ],
                                 ),
-                              );
-                            },
+                              ],
+                            ),
                           ),
                           SizedBox(
                             height: 30.h,
@@ -216,23 +225,16 @@ class _NowPlayingState extends State<NowPlaying> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 CustomOnTapIconWidget(
-                                  function: () {},
+                                  function: () {
+                                    context.read<MusicPlaylistCubit>().randomMusicPlay();
+                                  },
                                   textAssetsIcon: Assets.icons.randomMusic,
                                 ),
                                 Row(
                                   children: [
                                     CustomOnTapIconWidget(
                                       function: () {
-                                        if (widget.initialValue > 0) {
-                                          widget.initialValue = widget.initialValue - 1;
-                                          _carouselController.animateToPage(
-                                            widget.initialValue + 1,
-                                            duration: const Duration(
-                                              milliseconds: 500,
-                                            ),
-                                            curve: Curves.easeInOut,
-                                          );
-                                        }
+                                        contextRead.onTapLeftBackNowPlaying();
                                       },
                                       textAssetsIcon: Assets.icons.prevLeft,
                                     ),
@@ -242,7 +244,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                       ),
                                       child: InkWell(
                                         onTap: () {
-                                          // widget.onTapPause != widget.onTapPause;
+                                          contextRead.onTapPause();
                                         },
                                         child: Container(
                                           height: 60.h,
@@ -252,32 +254,25 @@ class _NowPlayingState extends State<NowPlaying> {
                                             gradient: AppColors.nowPlayingContainerGradient,
                                             shape: BoxShape.circle,
                                           ),
-                                          child: context.read<MusicPlaylistCubit>().onTapPauseGlobal
-                                              ? SvgPicture.asset(Assets.icons.playMusic)
-                                              : SvgPicture.asset(Assets.icons.pause),
+                                          child: context.watch<MusicPlaylistCubit>().isPlaying
+                                              ? SvgPicture.asset(Assets.icons.pause)
+                                              : SvgPicture.asset(Assets.icons.playMusic),
                                         ),
                                       ),
                                     ),
                                     CustomOnTapIconWidget(
                                       function: () {
-                                        if (widget.initialValue < contextRead.musicModel.length) {
-                                          widget.initialValue = widget.initialValue + 1;
-                                          _carouselController.animateToPage(
-                                            widget.initialValue + 1,
-                                            duration: const Duration(
-                                              milliseconds: 500,
-                                            ),
-                                            curve: Curves.easeInOut,
-                                          );
-                                        }
+                                        contextRead.onTapNextNowPlaying();
                                       },
                                       textAssetsIcon: Assets.icons.nextRight,
                                     ),
                                   ],
                                 ),
-                                CustomOnTapIconWidget(
-                                  function: () {},
-                                  textAssetsIcon: Assets.icons.reshare,
+                                RepeatIcon(
+                                  function: () {
+                                    context.read<MusicPlaylistCubit>().repeatFunc();
+                                  },
+                                  onTap: context.watch<MusicPlaylistCubit>().onTaprepeat,
                                 ),
                               ],
                             ),
@@ -291,7 +286,9 @@ class _NowPlayingState extends State<NowPlaying> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 CustomOnTapIconWidget(
-                                  function: () {},
+                                  function: () {
+                                    
+                                  },
                                   textAssetsIcon: Assets.icons.valume,
                                 ),
                                 CustomOnTapIconWidget(
