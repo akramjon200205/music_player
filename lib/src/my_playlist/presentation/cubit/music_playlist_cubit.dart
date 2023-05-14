@@ -16,7 +16,7 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
   bool isPlaying = false;
   OnAudioQuery audioQuery = OnAudioQuery();
   CarouselController carouselController = CarouselController();
-    
+  var sliderPosition;
 
   late final AudioPlayer audioPlayer;
   MusicPlaylistCubit() : super(MusicPlaylistInitial());
@@ -85,7 +85,8 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       indexMusic = musicModel.length - 1;
     }
     isPlaying = true;
-    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer.setAudioSource(
+        AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
     audioPlayer.play();
     emit(
       MusicPlaylistLoaded(
@@ -107,7 +108,8 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       duration: const Duration(milliseconds: 800),
     );
     isPlaying = true;
-    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer.setAudioSource(
+        AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
     audioPlayer.play();
     emit(
       MusicPlaylistLoaded(
@@ -125,7 +127,8 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       indexMusic = 0;
     }
     isPlaying = true;
-    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer.setAudioSource(
+        AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
     audioPlayer.play();
     emit(
       MusicPlaylistLoaded(
@@ -147,7 +150,8 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       duration: const Duration(milliseconds: 800),
     );
     isPlaying = true;
-    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer.setAudioSource(
+        AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
     audioPlayer.play();
     emit(
       MusicPlaylistLoaded(
@@ -160,7 +164,10 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
 
   onNextMusicPLay(double duration) {
     final durationTime = Duration(
-      milliseconds: (audioPlayer.duration == null ? 1 : audioPlayer.duration!.inMilliseconds * duration / 100).toInt(),
+      milliseconds: (audioPlayer.duration == null
+              ? 1
+              : audioPlayer.duration!.inMilliseconds * duration / 100)
+          .toInt(),
     );
     if (durationTime == audioPlayer.duration) {
       audioPlayer.seekToNext();
@@ -169,7 +176,8 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
         indexMusic = 0;
       }
       isPlaying = true;
-      audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+      audioPlayer.setAudioSource(
+          AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
       audioPlayer.play();
       emit(
         MusicPlaylistLoaded(
@@ -213,7 +221,8 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       duration: const Duration(milliseconds: 800),
     );
     isPlaying = true;
-    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer.setAudioSource(
+        AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
     audioPlayer.play();
     emit(
       MusicPlaylistLoaded(
@@ -222,5 +231,22 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
         index: indexMusic,
       ),
     );
-  }  
+  }
+
+  String songPosition(dynamic position) {
+    int durationInSeconds = (position.duration! ~/ 1000).toInt();
+    int minutes = durationInSeconds ~/ 60;
+    int seconds = durationInSeconds % 60;
+    if (seconds ~/ 10 < 1) {
+      return '$minutes : 0$seconds';
+    }
+    return '$minutes : $seconds';
+  }
+
+  getSliderPosition() async {
+    sliderPosition = audioPlayer.positionStream.listen((position) {
+      print(
+          'Current position: ${position.inMinutes}:${position.inSeconds.remainder(60)}');
+    });
+  }
 }

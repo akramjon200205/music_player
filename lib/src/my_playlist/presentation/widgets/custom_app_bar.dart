@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_player/src/core/db/local_database.dart';
 import 'package:music_player/src/core/model/music_model.dart';
 import 'package:music_player/src/my_playlist/presentation/widgets/repeat_icon.dart';
+import 'package:music_player/src/now_playing/presentation/widgets/bottomsheet_mixin.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../../assets/app_colors.dart';
@@ -34,7 +35,8 @@ class CustomAppBar extends StatefulWidget {
   State<CustomAppBar> createState() => _CustomAppBarState();
 }
 
-class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMixin {
+class _CustomAppBarState extends State<CustomAppBar>
+    with TickerProviderStateMixin, Bottomsheets {
   late AnimationController controller;
   double valueSlider = 0;
 
@@ -57,7 +59,8 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
             left: 18.w,
             right: 18.w,
           ),
-          decoration: BoxDecoration(gradient: AppColors.myPlayListContainerColor),
+          decoration:
+              BoxDecoration(gradient: AppColors.myPlayListContainerColor),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -90,7 +93,7 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                   // ),
                   GestureDetector(
                     onTap: () {
-                      playerBottomSheet(context);
+                      playerBottomSheet(context,controller);
                     },
                     child: ClipRect(
                       child: BackdropFilter(
@@ -108,15 +111,21 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                             children: [
                               CustomOnTapIconWidget(
                                 function: () {
-                                  context.read<MusicPlaylistCubit>().onTapLeftBack();
+                                  context
+                                      .read<MusicPlaylistCubit>()
+                                      .onTapLeftBack();
                                 },
                                 textAssetsIcon: Assets.icons.prevLeft,
                               ),
                               RepeatIcon(
                                 function: () {
-                                  context.read<MusicPlaylistCubit>().repeatFunc();
+                                  context
+                                      .read<MusicPlaylistCubit>()
+                                      .repeatFunc();
                                 },
-                                onTap: context.read<MusicPlaylistCubit>().onTaprepeat,
+                                onTap: context
+                                    .read<MusicPlaylistCubit>()
+                                    .onTaprepeat,
                               ),
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -130,15 +139,21 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                               ),
                               CustomOnTapIconWidget(
                                 function: () {
-                                  context.read<MusicPlaylistCubit>().onTapPause();
+                                  context
+                                      .read<MusicPlaylistCubit>()
+                                      .onTapPause();
                                 },
-                                textAssetsIcon: context.watch<MusicPlaylistCubit>().isPlaying
+                                textAssetsIcon: context
+                                        .watch<MusicPlaylistCubit>()
+                                        .isPlaying
                                     ? Assets.icons.pause
                                     : Assets.icons.playMusic,
                               ),
                               CustomOnTapIconWidget(
                                 function: () {
-                                  context.read<MusicPlaylistCubit>().onTapNext();
+                                  context
+                                      .read<MusicPlaylistCubit>()
+                                      .onTapNext();
                                 },
                                 textAssetsIcon: Assets.icons.nextRight,
                               ),
@@ -157,17 +172,6 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
         ),
       ],
     );
-  }
-
-  PersistentBottomSheetController<dynamic> playerBottomSheet(BuildContext context) {
-    return showBottomSheet(
-                      elevation: 0,
-                      context: context,
-                      transitionAnimationController: controller,
-                      builder: (context) {
-                        return const NowPlaying();
-                      },
-                    );
   }
 }
 

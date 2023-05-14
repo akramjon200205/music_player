@@ -64,7 +64,7 @@ class CustomContainerWidget extends StatelessWidget {
                             type: ArtworkType.AUDIO,
                             artworkBorder: BorderRadius.circular(10.r),
                             artworkFit: BoxFit.fill,
-                            imageSized: 28.h,
+                          
                           ),                          
                         ),
                         // boolean()
