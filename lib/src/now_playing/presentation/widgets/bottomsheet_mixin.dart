@@ -18,14 +18,13 @@ import '../../../my_playlist/presentation/widgets/repeat_icon.dart';
 import 'duration_music.dart';
 
 class Bottomsheets {
-  PersistentBottomSheetController<dynamic> playerBottomSheet(
-      BuildContext context, AnimationController controller) {
+  PersistentBottomSheetController<dynamic> playerBottomSheet(BuildContext context, AnimationController controller) {
     return showBottomSheet(
       elevation: 0,
       context: context,
       transitionAnimationController: controller,
       builder: (context) {
-        return StatefulBuilder(          
+        return StatefulBuilder(
           builder: (context, state) {
             return Stack(
               children: [
@@ -89,24 +88,17 @@ class Bottomsheets {
                           return Column(
                             children: [
                               CarouselSlider.builder(
-                                itemCount: context
-                                    .read<MusicPlaylistCubit>()
-                                    .musicModel
-                                    .length,
-                                carouselController: context
-                                    .read<MusicPlaylistCubit>()
-                                    .carouselController,
+                                itemCount: context.read<MusicPlaylistCubit>().musicModel.length,
+                                carouselController: context.read<MusicPlaylistCubit>().carouselController,
                                 options: CarouselOptions(
                                   aspectRatio: 1.5,
                                   reverse: false,
                                   enlargeCenterPage: true,
                                   enableInfiniteScroll: false,
-                                  enlargeStrategy:
-                                      CenterPageEnlargeStrategy.height,
+                                  enlargeStrategy: CenterPageEnlargeStrategy.height,
                                   initialPage: contextRead.indexMusic,
                                   autoPlay: false,
-                                  scrollPhysics:
-                                      const NeverScrollableScrollPhysics(),
+                                  scrollPhysics: const NeverScrollableScrollPhysics(),
                                 ),
                                 itemBuilder: (context, index, realIndex) {
                                   return Container(
@@ -114,14 +106,12 @@ class Bottomsheets {
                                     width: 280.w,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(40.r),
-                                      color: const Color(0xff1A1335)
-                                          .withOpacity(0.5),
+                                      color: const Color(0xff1A1335).withOpacity(0.5),
                                     ),
                                     child: QueryArtworkWidget(
                                       id: contextRead.musicModel[index].id,
                                       type: ArtworkType.AUDIO,
-                                      artworkBorder:
-                                          BorderRadius.circular(40.r),
+                                      artworkBorder: BorderRadius.circular(40.r),
                                       artworkFit: BoxFit.fill,
                                     ),
                                   );
@@ -138,9 +128,7 @@ class Bottomsheets {
                                     width: 250.w,
                                     height: 30.h,
                                     child: Text(
-                                      contextRead
-                                          .musicModel[contextRead.indexMusic]
-                                          .title,
+                                      contextRead.musicModel[contextRead.indexMusic].title,
                                       style: AppTextStyles.body24w4,
                                     ),
                                   ),
@@ -149,11 +137,7 @@ class Bottomsheets {
                                     width: 200.w,
                                     height: 30.h,
                                     child: Text(
-                                      contextRead
-                                              .musicModel[
-                                                  contextRead.indexMusic]
-                                              .artist ??
-                                          "unknown",
+                                      contextRead.musicModel[contextRead.indexMusic].artist ?? "unknown",
                                       style: AppTextStyles.body18w4,
                                     ),
                                   ),
@@ -174,16 +158,18 @@ class Bottomsheets {
                                       height: 4.h,
                                     ),
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          contextRead.songPosition(0),
+                                          "00 : 00",
                                           style: AppTextStyles.body14w4,
                                         ),
                                         Text(
-                                          formatTime(contextRead.musicModel[
-                                              contextRead.indexMusic]),
+                                          formatTime(
+                                            context
+                                                .read<MusicPlaylistCubit>()
+                                                .musicModel[context.read<MusicPlaylistCubit>().indexMusic],
+                                          ),
                                           style: AppTextStyles.body14w4,
                                         ),
                                       ],
@@ -197,14 +183,11 @@ class Bottomsheets {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 32.w),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     CustomOnTapIconWidget(
                                       function: () {
-                                        context
-                                            .read<MusicPlaylistCubit>()
-                                            .randomMusicPlay();
+                                        context.read<MusicPlaylistCubit>().randomMusicPlay();
                                       },
                                       textAssetsIcon: Assets.icons.randomMusic,
                                     ),
@@ -212,8 +195,7 @@ class Bottomsheets {
                                       children: [
                                         CustomOnTapIconWidget(
                                           function: () {
-                                            contextRead
-                                                .onTapLeftBackNowPlaying();
+                                            contextRead.onTapLeftBackNowPlaying();
                                           },
                                           textAssetsIcon: Assets.icons.prevLeft,
                                         ),
@@ -230,18 +212,12 @@ class Bottomsheets {
                                               width: 60.h,
                                               alignment: Alignment.center,
                                               decoration: const BoxDecoration(
-                                                gradient: AppColors
-                                                    .nowPlayingContainerGradient,
+                                                gradient: AppColors.nowPlayingContainerGradient,
                                                 shape: BoxShape.circle,
                                               ),
-                                              child: context
-                                                      .watch<
-                                                          MusicPlaylistCubit>()
-                                                      .isPlaying
-                                                  ? SvgPicture.asset(
-                                                      Assets.icons.pause)
-                                                  : SvgPicture.asset(
-                                                      Assets.icons.playMusic),
+                                              child: context.watch<MusicPlaylistCubit>().isPlaying
+                                                  ? SvgPicture.asset(Assets.icons.pause)
+                                                  : SvgPicture.asset(Assets.icons.playMusic),
                                             ),
                                           ),
                                         ),
@@ -249,20 +225,15 @@ class Bottomsheets {
                                           function: () {
                                             contextRead.onTapNextNowPlaying();
                                           },
-                                          textAssetsIcon:
-                                              Assets.icons.nextRight,
+                                          textAssetsIcon: Assets.icons.nextRight,
                                         ),
                                       ],
                                     ),
                                     RepeatIcon(
                                       function: () {
-                                        context
-                                            .read<MusicPlaylistCubit>()
-                                            .repeatFunc();
+                                        context.read<MusicPlaylistCubit>().repeatFunc();
                                       },
-                                      onTap: context
-                                          .watch<MusicPlaylistCubit>()
-                                          .onTaprepeat,
+                                      onTap: context.watch<MusicPlaylistCubit>().onTaprepeat,
                                     ),
                                   ],
                                 ),
@@ -273,8 +244,7 @@ class Bottomsheets {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 30.w),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     CustomOnTapIconWidget(
                                       function: () {},

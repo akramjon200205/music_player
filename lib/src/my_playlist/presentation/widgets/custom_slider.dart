@@ -8,6 +8,9 @@ import 'package:just_audio/just_audio.dart';
 
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 
+import '../../../assets/app_text_styles.dart';
+import '../../../now_playing/presentation/widgets/duration_music.dart';
+
 class CustomSlider extends StatefulWidget {
   Color activeTrackColor;
   Color thumbColor;
@@ -32,6 +35,7 @@ class _CustomSliderState extends State<CustomSlider> {
       setState(() {
         sliderPosition = event.inSeconds / (audioPlayer.duration == null ? 1 : audioPlayer.duration!.inSeconds) * 100;
       });
+      context.read<MusicPlaylistCubit>().position = audioPlayer.duration!.inMilliseconds * sliderPosition ~/ 100;
       if (sliderPosition == 100) {
         switch (context.read<MusicPlaylistCubit>().onTaprepeat) {
           case true:
@@ -42,16 +46,12 @@ class _CustomSliderState extends State<CustomSlider> {
               context.read<MusicPlaylistCubit>().onTapNext();
               break;
             }
-
-          default:
         }
       }
     });
 
     super.initState();
   }
-
-  onNextMusic() {}
 
   @override
   Widget build(BuildContext context) {
