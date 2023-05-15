@@ -243,10 +243,10 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     return '$minutes : $seconds';
   }
 
-  getSliderPosition() async {
-    sliderPosition = audioPlayer.positionStream.listen((position) {
-      print(
-          'Current position: ${position.inMinutes}:${position.inSeconds.remainder(60)}');
-    });
-  }
+  // getSliderPosition() async {
+  //   sliderPosition = audioPlayer.positionStream.listen((position) {
+  //     print(
+  //         'Current position: ${position.inMinutes}:${position.inSeconds.remainder(60)}');
+  //   });
+  // }
 }

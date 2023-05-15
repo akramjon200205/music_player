@@ -25,7 +25,7 @@ class Bottomsheets {
       context: context,
       transitionAnimationController: controller,
       builder: (context) {
-        return StatefulBuilder(
+        return StatefulBuilder(          
           builder: (context, state) {
             return Stack(
               children: [
@@ -178,7 +178,7 @@ class Bottomsheets {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          contextRead.getSliderPosition(),
+                                          contextRead.songPosition(0),
                                           style: AppTextStyles.body14w4,
                                         ),
                                         Text(
