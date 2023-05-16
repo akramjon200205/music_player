@@ -16,7 +16,7 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
   bool isPlaying = false;
   OnAudioQuery audioQuery = OnAudioQuery();
   CarouselController carouselController = CarouselController();
-  int position = 0;
+  int onTap = 0;
 
   late final AudioPlayer audioPlayer;
   MusicPlaylistCubit() : super(MusicPlaylistInitial());
@@ -64,6 +64,10 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       isPlaying = false;
       audioPlayer.stop();
     } else {
+      if (indexMusic == 0 && onTap == 0) {
+        audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+        onTap = 1;
+      }
       isPlaying = true;
       audioPlayer.play();
     }
@@ -104,7 +108,7 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     }
     carouselController.animateToPage(
       indexMusic,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 500),
     );
     isPlaying = true;
     audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
@@ -142,13 +146,15 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     if (indexMusic > musicModel.length - 1) {
       indexMusic = 0;
     }
-    carouselController.animateToPage(
-      indexMusic,
-      duration: const Duration(milliseconds: 800),
-    );
     isPlaying = true;
     audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
     audioPlayer.play();
+
+    carouselController.animateToPage(
+      indexMusic,
+      duration: const Duration(milliseconds: 500),
+    );
+
     emit(
       MusicPlaylistLoaded(
         musicList: musicModel,
@@ -210,11 +216,26 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     indexMusic = random.nextInt(musicModel.length);
     carouselController.animateToPage(
       indexMusic,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1000),
     );
     isPlaying = true;
     audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
     audioPlayer.play();
+    emit(
+      MusicPlaylistLoaded(
+        musicList: musicModel,
+        musicModel: musicModel[indexMusic],
+        index: indexMusic,
+      ),
+    );
+  }
+
+  void caruselSliderNext() {
+    carouselController.animateToPage(
+      indexMusic,
+      duration: const Duration(milliseconds: 500),
+    );
+
     emit(
       MusicPlaylistLoaded(
         musicList: musicModel,

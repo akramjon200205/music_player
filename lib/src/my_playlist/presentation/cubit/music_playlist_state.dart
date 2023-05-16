@@ -21,11 +21,13 @@ class MusicPlaylistLoaded extends MusicPlaylistState {
   List<SongModel> musicList;
   SongModel? musicModel;
   int index;
+  String position;
 
   MusicPlaylistLoaded({
     required this.musicList,
     this.musicModel,
     this.index = 0,
+    this.position = "0 : 00",
   });
 
   @override

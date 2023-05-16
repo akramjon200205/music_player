@@ -24,13 +24,11 @@ class CustomContainerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Column(
       children: [
         Container(
           width: double.infinity,
-          height: 80.h,
+          height: 80.w,
           padding: EdgeInsets.only(left: 10.w, right: 16.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.r),
@@ -64,8 +62,7 @@ class CustomContainerWidget extends StatelessWidget {
                             type: ArtworkType.AUDIO,
                             artworkBorder: BorderRadius.circular(10.r),
                             artworkFit: BoxFit.fill,
-                          
-                          ),                          
+                          ),
                         ),
                         // boolean()
                         //     ? PlayAndPauseWidget(
@@ -85,7 +82,7 @@ class CustomContainerWidget extends StatelessWidget {
                       SizedBox(
                         width: 150.w,
                         child: Text(
-                          musicModel.title ,
+                          musicModel.title,
                           style: AppTextStyles.body16w4,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -112,7 +109,7 @@ class CustomContainerWidget extends StatelessWidget {
               Container(
                 width: 40.w,
                 alignment: Alignment.center,
-                child:isActive
+                child: isActive
                     ? SvgPicture.asset(Assets.icons.soundWave)
                     : Text(
                         formatTime(musicModel),
