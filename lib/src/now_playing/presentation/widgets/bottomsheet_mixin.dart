@@ -15,12 +15,11 @@ import '../../../my_playlist/presentation/cubit/music_playlist_state.dart';
 import '../../../my_playlist/presentation/widgets/custom_on_tap_icon_widget.dart';
 import '../../../my_playlist/presentation/widgets/custom_slider.dart';
 import '../../../my_playlist/presentation/widgets/repeat_icon.dart';
-import 'duration_music.dart';
 
 class Bottomsheets {
   PersistentBottomSheetController<dynamic> playerBottomSheet(BuildContext context, AnimationController controller) {
     return showBottomSheet(
-      elevation: 0,      
+      elevation: 0,
       context: context,
       transitionAnimationController: controller,
       builder: (context) {
@@ -225,7 +224,11 @@ class Bottomsheets {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   CustomOnTapIconWidget(
-                                    function: () {},
+                                    function: () {
+                                      context.read<MusicPlaylistCubit>().audioPlayer.volumeStream.listen((event) { 
+                                        
+                                      });                                      
+                                    },
                                     textAssetsIcon: Assets.icons.valume,
                                   ),
                                   CustomOnTapIconWidget(

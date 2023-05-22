@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:music_player/src/assets/app_colors.dart';
 import 'package:music_player/src/assets/assets.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
@@ -25,13 +24,20 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
   Duration duration = Duration.zero;
   late AnimationController controller;
   AudioPlayer audioPlayer = AudioPlayer();
+  bool onRequest = false;
 
   @override
   void initState() {
     super.initState();
-    Permission.storage.request();
-    controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    requestStorage();
     context.read<MusicPlaylistCubit>().setAudioPlayer(audioPlayer);
+
+    controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+  }
+
+  requestStorage()async{
+    await Permission.storage. request();
+    onRequest = true;
   }
 
   @override

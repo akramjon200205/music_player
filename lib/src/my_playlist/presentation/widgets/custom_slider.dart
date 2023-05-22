@@ -1,6 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +8,7 @@ import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_c
 import '../../../assets/app_text_styles.dart';
 import '../../../now_playing/presentation/widgets/duration_music.dart';
 
+// ignore: must_be_immutable
 class CustomSlider extends StatefulWidget {
   Color activeTrackColor;
   Color thumbColor;
@@ -96,7 +94,7 @@ class _CustomSliderState extends State<CustomSlider> {
                 onChangeEnd: (value) {
                   context.read<MusicPlaylistCubit>().onSeekMusic(
                         Duration(
-                          milliseconds: (audioPlayer.duration!.inMilliseconds * value / 100).toInt(),
+                          milliseconds: audioPlayer.duration!.inMilliseconds * value ~/ 100,
                         ),
                       );
                 },

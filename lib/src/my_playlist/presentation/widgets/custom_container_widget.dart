@@ -2,9 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:marquee/marquee.dart';
-
-import 'package:music_player/src/core/model/music_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../../assets/app_text_styles.dart';

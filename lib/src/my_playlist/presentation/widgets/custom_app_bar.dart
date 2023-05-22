@@ -12,11 +12,9 @@ import 'package:on_audio_query/on_audio_query.dart';
 import '../../../assets/app_colors.dart';
 import '../../../assets/app_text_styles.dart';
 import '../../../assets/assets.dart';
-import '../../../now_playing/presentation/pages/now_playing.dart';
 import '../cubit/music_playlist_cubit.dart';
 import '../cubit/music_playlist_state.dart';
 import 'custom_on_tap_icon_widget.dart';
-import 'custom_slider.dart';
 
 // ignore: must_be_immutable
 class CustomAppBar extends StatefulWidget {
