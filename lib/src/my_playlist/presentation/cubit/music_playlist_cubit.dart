@@ -28,7 +28,7 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
   void downloadMusics() async {
     preferences = await SharedPreferences.getInstance();
     emit(MusicPlaylistLoading());
-    indexMusic = await preferences?.getInt("counter") ?? 0;
+    indexMusic = preferences?.getInt("counter") ?? 0;
     musicList = await audioQuery.querySongs(
       sortType: SongSortType.TITLE,
       orderType: OrderType.ASC_OR_SMALLER,
@@ -52,6 +52,7 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       developer.log("sorry");
       emit(const MusicPlaylistError(message: "Sorry"));
     }
+    emit(MusicPlaylistLoading());
     emit(
       MusicPlaylistLoaded(
         musicList: musicList,
@@ -215,7 +216,13 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
   void randomMusicPlay() async {
     preferences = await SharedPreferences.getInstance();
     var random = Random();
-    indexMusic = random.nextInt(musicList.length);
+    int size = musicList.length;
+    int left = indexMusic < 25 ? indexMusic : 25;
+    int right = indexMusic + 25 > size ? size - indexMusic : 25;
+    int previousIndex = indexMusic - left + random.nextInt(left);
+    int nextIndex = indexMusic + right - random.nextInt(right);
+    indexMusic = random.nextBool() ? previousIndex : nextIndex;
+    developer.log("$indexMusic");
     preferences?.setInt("counter", indexMusic);
     carouselController.animateToPage(
       indexMusic,

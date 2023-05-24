@@ -129,7 +129,9 @@ class Bottomsheets {
                                   width: 250.w,
                                   height: 30.h,
                                   child: Text(
-                                    contextRead.musicList[contextRead.preferences?.getInt("counter") ?? contextRead.indexMusic].title,
+                                    contextRead
+                                        .musicList[contextRead.preferences?.getInt("counter") ?? contextRead.indexMusic]
+                                        .title,
                                     style: AppTextStyles.body24w4,
                                   ),
                                 ),
@@ -138,7 +140,11 @@ class Bottomsheets {
                                   width: 200.w,
                                   height: 30.h,
                                   child: Text(
-                                    contextRead.musicList[contextRead.preferences?.getInt("counter") ?? contextRead.indexMusic].artist ?? "unknown",
+                                    contextRead
+                                            .musicList[
+                                                contextRead.preferences?.getInt("counter") ?? contextRead.indexMusic]
+                                            .artist ??
+                                        "unknown",
                                     style: AppTextStyles.body18w4,
                                   ),
                                 ),
@@ -236,6 +242,14 @@ class Bottomsheets {
                                 ],
                               ),
                             ),
+                            // Center(
+                            //   child: Text(
+                            //     "${context.read<MusicPlaylistCubit>().preferences?.getInt('counter') ?? context.read<MusicPlaylistCubit>().indexMusic}",
+                            //     style: AppTextStyles.body24w5.copyWith(
+                            //       color: AppColors.white,
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         );
                       } else {

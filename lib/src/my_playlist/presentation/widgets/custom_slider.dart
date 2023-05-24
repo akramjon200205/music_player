@@ -68,62 +68,67 @@ class _CustomSliderState extends State<CustomSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 6.w,
-          width: double.infinity,
-          child: SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: widget.activeTrackColor,
-              inactiveTrackColor: Colors.white.withOpacity(0.5),
-              activeTickMarkColor: Colors.white.withOpacity(0.5),
-              trackShape: const RectangularSliderTrackShape(),
-              trackHeight: 4,
-              thumbColor: widget.thumbColor,
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
-              overlayShape: const RoundSliderOverlayShape(overlayRadius: 0.0),
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              child: Slider(
-                min: 0,
-                max: 100,
-                divisions: 100,
-                value: sliderPosition,
-                onChangeEnd: (value) {
-                  context.read<MusicPlaylistCubit>().onSeekMusic(
-                        Duration(
-                          milliseconds: audioPlayer.duration!.inMilliseconds * value ~/ 100,
-                        ),
-                      );
-                },
-                onChanged: (double value) {},
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 5.h,
+      ),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 6.w,
+            width: double.infinity,
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: widget.activeTrackColor,
+                inactiveTrackColor: Colors.white.withOpacity(0.5),
+                activeTickMarkColor: Colors.white.withOpacity(0.5),
+                trackShape: const RectangularSliderTrackShape(),
+                trackHeight: 4,
+                thumbColor: widget.thumbColor,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 0.0),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: Slider(
+                  min: 0,
+                  max: 100,
+                  divisions: 100,
+                  value: sliderPosition,
+                  onChangeEnd: (value) {
+                    context.read<MusicPlaylistCubit>().onSeekMusic(
+                          Duration(
+                            milliseconds: audioPlayer.duration!.inMilliseconds * value ~/ 100,
+                          ),
+                        );
+                  },
+                  onChanged: (double value) {},
+                ),
               ),
             ),
           ),
-        ),
-        SizedBox(
-          height: 4.h,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              positionMusic(),
-              style: AppTextStyles.body14w4,
-            ),
-            Text(
-              formatTime(
-                context.read<MusicPlaylistCubit>().musicList[
-                    context.read<MusicPlaylistCubit>().preferences?.getInt("counter") ??
-                        context.read<MusicPlaylistCubit>().indexMusic],
+          SizedBox(
+            height: 4.h,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                positionMusic(),
+                style: AppTextStyles.body14w4,
               ),
-              style: AppTextStyles.body14w4,
-            ),
-          ],
-        ),
-      ],
+              Text(
+                formatTime(
+                  context.read<MusicPlaylistCubit>().musicList[
+                      context.read<MusicPlaylistCubit>().preferences?.getInt("counter") ??
+                          context.read<MusicPlaylistCubit>().indexMusic],
+                ),
+                style: AppTextStyles.body14w4,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
