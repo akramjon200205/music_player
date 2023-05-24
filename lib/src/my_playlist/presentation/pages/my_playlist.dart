@@ -1,6 +1,8 @@
 // import 'package:audioplayers/audioplayers.dart';
 
 // import 'package:audioplayers/audioplayers.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +12,7 @@ import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_c
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
 import 'package:music_player/src/now_playing/presentation/widgets/bottomsheet_mixin.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_container_widget.dart';
 
@@ -24,20 +27,23 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
   Duration duration = Duration.zero;
   late AnimationController controller;
   AudioPlayer audioPlayer = AudioPlayer();
-  bool onRequest = false;
+  int? itemIndex;
 
   @override
   void initState() {
     super.initState();
     requestStorage();
+    sharedPreferencesFunc();
     context.read<MusicPlaylistCubit>().setAudioPlayer(audioPlayer);
-
-    controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
   }
 
-  requestStorage()async{
-    await Permission.storage. request();
-    onRequest = true;
+  requestStorage() async {
+    await Permission.storage.request();
+  }
+
+  sharedPreferencesFunc() async {
+    context.read<MusicPlaylistCubit>().preferences = await SharedPreferences.getInstance();
   }
 
   @override
@@ -48,6 +54,7 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
 
   @override
   Widget build(BuildContext context) {
+    final contextMusic = context.read<MusicPlaylistCubit>();
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -63,15 +70,11 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
           ),
           child: Stack(
             children: [
-              // Container(
-              //   decoration: BoxDecoration(
-              //     gradient: AppColors.myPlayListBackgroundColor,
-              //   ),
-              // ),
               BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
                 builder: (context, state) {
                   if (state is MusicPlaylistInitial) {
-                    context.read<MusicPlaylistCubit>().downloadMusics();
+                    
+                    contextMusic.downloadMusics();
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
@@ -96,18 +99,20 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
                           itemBuilder: (context, index) {
                             return InkWell(
                               onTap: () async {
-                                if (state.index != index) {
-                                  context.read<MusicPlaylistCubit>().onTapMusicItem(
-                                        music: state.musicList[index],
-                                        index: index,
-                                      );
-                                } else if (state.index == index) {
+                                if ((contextMusic.preferences?.getInt("counter") ?? state.index) != index) {
+                                  contextMusic.preferences?.setInt("counter", index);
+                                  // log("${context.read<MusicPlaylistCubit>().preferences?.getInt("counter")}");
+                                  contextMusic.onTapMusicItem(
+                                    music: state.musicList[contextMusic.preferences?.getInt("counter") ?? index],
+                                    index: contextMusic.preferences?.getInt("counter") ?? index,
+                                  );
+                                } else if ((contextMusic.preferences?.getInt("counter") ?? state.index) == index) {
                                   playerBottomSheet(context, controller);
                                 }
                               },
                               child: CustomContainerWidget(
                                 musicModel: state.musicList[index],
-                                isActive: state.index == index,
+                                isActive: (contextMusic.preferences?.getInt("counter") ?? state.index) == index,
                               ),
                             );
                           },
@@ -131,8 +136,8 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
                 builder: (context, state) {
                   if (state is MusicPlaylistLoaded) {
                     return CustomAppBar(
-                      index: state.index,
-                      musicModel: state.musicModel ?? state.musicList[state.index],
+                      musicModel: state.musicModel ??
+                          state.musicList[contextMusic.preferences?.getInt("counter") ?? state.index],
                     );
                   } else {
                     return const SizedBox.shrink();

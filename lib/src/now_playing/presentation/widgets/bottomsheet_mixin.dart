@@ -89,7 +89,7 @@ class Bottomsheets {
                         return Column(
                           children: [
                             CarouselSlider.builder(
-                              itemCount: context.read<MusicPlaylistCubit>().musicModel.length,
+                              itemCount: context.read<MusicPlaylistCubit>().musicList.length,
                               carouselController: context.read<MusicPlaylistCubit>().carouselController,
                               options: CarouselOptions(
                                 aspectRatio: 1.5,
@@ -97,7 +97,7 @@ class Bottomsheets {
                                 enlargeCenterPage: true,
                                 enableInfiniteScroll: false,
                                 enlargeStrategy: CenterPageEnlargeStrategy.height,
-                                initialPage: contextRead.indexMusic,
+                                initialPage: contextRead.preferences?.getInt("counter") ?? contextRead.indexMusic,
                                 autoPlay: false,
                                 scrollPhysics: const NeverScrollableScrollPhysics(),
                               ),
@@ -110,7 +110,7 @@ class Bottomsheets {
                                     color: const Color(0xffFFFFFF).withOpacity(0.15),
                                   ),
                                   child: QueryArtworkWidget(
-                                    id: contextRead.musicModel[index].id,
+                                    id: contextRead.musicList[index].id,
                                     type: ArtworkType.AUDIO,
                                     artworkBorder: BorderRadius.circular(40.r),
                                     artworkFit: BoxFit.fill,
@@ -129,7 +129,7 @@ class Bottomsheets {
                                   width: 250.w,
                                   height: 30.h,
                                   child: Text(
-                                    contextRead.musicModel[contextRead.indexMusic].title,
+                                    contextRead.musicList[contextRead.preferences?.getInt("counter") ?? contextRead.indexMusic].title,
                                     style: AppTextStyles.body24w4,
                                   ),
                                 ),
@@ -138,7 +138,7 @@ class Bottomsheets {
                                   width: 200.w,
                                   height: 30.h,
                                   child: Text(
-                                    contextRead.musicModel[contextRead.indexMusic].artist ?? "unknown",
+                                    contextRead.musicList[contextRead.preferences?.getInt("counter") ?? contextRead.indexMusic].artist ?? "unknown",
                                     style: AppTextStyles.body18w4,
                                   ),
                                 ),
@@ -225,9 +225,7 @@ class Bottomsheets {
                                 children: [
                                   CustomOnTapIconWidget(
                                     function: () {
-                                      context.read<MusicPlaylistCubit>().audioPlayer.volumeStream.listen((event) { 
-                                        
-                                      });                                      
+                                      context.read<MusicPlaylistCubit>().audioPlayer.volumeStream.listen((event) {});
                                     },
                                     textAssetsIcon: Assets.icons.valume,
                                   ),

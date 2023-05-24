@@ -1,29 +1,35 @@
 import 'dart:developer' as developer;
+import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'music_playlist_state.dart';
 import 'dart:math';
 
 class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
-  // int index = 0;
-
-  late List<SongModel> musicModel = [];
+  late List<SongModel> musicList = [];
   int indexMusic = 0;
   bool onTaprepeat = false;
   bool isPlaying = false;
   OnAudioQuery audioQuery = OnAudioQuery();
   CarouselController carouselController = CarouselController();
   int onTap = 0;
+  late File filePathDeletingMusic;
+  bool onLongTap = false;
+
+  SharedPreferences? preferences;
 
   late final AudioPlayer audioPlayer;
   MusicPlaylistCubit() : super(MusicPlaylistInitial());
 
   void downloadMusics() async {
+    preferences = await SharedPreferences.getInstance();
     emit(MusicPlaylistLoading());
-    musicModel = await audioQuery.querySongs(
+    indexMusic = await preferences?.getInt("counter") ?? 0;
+    musicList = await audioQuery.querySongs(
       sortType: SongSortType.TITLE,
       orderType: OrderType.ASC_OR_SMALLER,
       uriType: UriType.EXTERNAL,
@@ -31,12 +37,12 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     );
     emit(
       MusicPlaylistLoaded(
-        musicList: musicModel,
+        musicList: musicList,
       ),
     );
   }
 
-  void onTapMusicItem({required SongModel music, required int index}) {
+  void onTapMusicItem({required SongModel music, required int index}) async {
     indexMusic = index;
     try {
       audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(music.uri!)));
@@ -48,24 +54,26 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     }
     emit(
       MusicPlaylistLoaded(
-        musicList: musicModel,
+        musicList: musicList,
         musicModel: music,
-        index: index,
+        index: indexMusic,
       ),
     );
   }
 
-  void onSeekMusic(Duration duration) {
+  void onSeekMusic(Duration duration) async {
     audioPlayer.seek(duration);
   }
 
-  void onTapPause() {
+  void onTapPause() async {
+    preferences = await SharedPreferences.getInstance();
     if (isPlaying) {
       isPlaying = false;
       audioPlayer.stop();
     } else {
-      if (indexMusic == 0 && onTap == 0) {
-        audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+      if ((indexMusic == preferences?.getInt("counter") || indexMusic == 0) && onTap == 0) {
+        audioPlayer
+            .setAudioSource(AudioSource.uri(Uri.parse(musicList[preferences?.getInt("counter") ?? indexMusic].uri!)));
         onTap = 1;
       }
       isPlaying = true;
@@ -75,79 +83,94 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     emit(MusicPlaylistLoading());
     emit(
       MusicPlaylistLoaded(
-        musicList: musicModel,
-        musicModel: musicModel[indexMusic],
-        index: indexMusic,
+        musicList: musicList,
+        musicModel: musicList[preferences?.getInt("counter") ?? indexMusic],
+        index: preferences?.getInt("counter") ?? indexMusic,
       ),
     );
   }
 
-  void onTapLeftBack() {
+  void onTapLeftBack() async {
     audioPlayer.seekToNext();
     indexMusic--;
+    preferences = await SharedPreferences.getInstance();
+    preferences?.setInt("counter", indexMusic);
     if (indexMusic < 0) {
-      indexMusic = musicModel.length - 1;
+      indexMusic = musicList.length - 1;
     }
     isPlaying = true;
-    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer
+        .setAudioSource(AudioSource.uri(Uri.parse(musicList[preferences?.getInt("counter") ?? indexMusic].uri!)));
     audioPlayer.play();
     emit(
       MusicPlaylistLoaded(
-        musicList: musicModel,
-        musicModel: musicModel[indexMusic],
-        index: indexMusic,
+        musicList: musicList,
+        musicModel: musicList[preferences?.getInt("counter") ?? indexMusic],
+        index: preferences?.getInt("counter") ?? indexMusic,
       ),
     );
   }
 
-  void onTapLeftBackNowPlaying() {
+  void onTapLeftBackNowPlaying() async {
     audioPlayer.seekToNext();
     indexMusic--;
-    if (indexMusic < 0) {
-      indexMusic = musicModel.length - 1;
+    preferences = await SharedPreferences.getInstance();
+    preferences?.setInt("counter", indexMusic);
+    if ((preferences?.getInt("counter") ?? indexMusic) < 0) {
+      preferences?.setInt("counter", musicList.length - 1);
+      indexMusic = musicList.length - 1;
     }
     carouselController.animateToPage(
       indexMusic,
       duration: const Duration(milliseconds: 500),
     );
     isPlaying = true;
-    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer
+        .setAudioSource(AudioSource.uri(Uri.parse(musicList[preferences?.getInt("counter") ?? indexMusic].uri!)));
     audioPlayer.play();
     emit(
       MusicPlaylistLoaded(
-        musicList: musicModel,
-        musicModel: musicModel[indexMusic],
-        index: indexMusic,
+        musicList: musicList,
+        musicModel: musicList[preferences?.getInt("counter") ?? indexMusic],
+        index: preferences?.getInt("counter") ?? indexMusic,
       ),
     );
   }
 
-  void onTapNext() {
+  void onTapNext() async {
     audioPlayer.seekToNext();
     indexMusic++;
-    if (indexMusic > musicModel.length - 1) {
+    preferences = await SharedPreferences.getInstance();
+    preferences?.setInt("counter", indexMusic);
+    if ((preferences?.getInt("counter") ?? indexMusic) > musicList.length - 1) {
       indexMusic = 0;
+      preferences?.setInt("counter", 0);
     }
     isPlaying = true;
-    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer
+        .setAudioSource(AudioSource.uri(Uri.parse(musicList[preferences?.getInt("counter") ?? indexMusic].uri!)));
     audioPlayer.play();
     emit(
       MusicPlaylistLoaded(
-        musicList: musicModel,
-        musicModel: musicModel[indexMusic],
-        index: indexMusic,
+        musicList: musicList,
+        musicModel: musicList[preferences?.getInt("counter") ?? indexMusic],
+        index: preferences?.getInt("counter") ?? indexMusic,
       ),
     );
   }
 
-  void onTapNextNowPlaying() {
+  void onTapNextNowPlaying() async {
     audioPlayer.seekToNext();
     indexMusic++;
-    if (indexMusic > musicModel.length - 1) {
+    preferences = await SharedPreferences.getInstance();
+    preferences?.setInt("counter", indexMusic);
+    if ((preferences?.getInt("counter") ?? indexMusic) > musicList.length - 1) {
       indexMusic = 0;
+      preferences?.setInt("counter", indexMusic);
     }
     isPlaying = true;
-    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer
+        .setAudioSource(AudioSource.uri(Uri.parse(musicList[preferences?.getInt("counter") ?? indexMusic].uri!)));
     audioPlayer.play();
 
     carouselController.animateToPage(
@@ -157,41 +180,19 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
 
     emit(
       MusicPlaylistLoaded(
-        musicList: musicModel,
-        musicModel: musicModel[indexMusic],
-        index: indexMusic,
+        musicList: musicList,
+        musicModel: musicList[preferences?.getInt("counter") ?? indexMusic],
+        index: preferences?.getInt("counter") ?? indexMusic,
       ),
     );
-  }
-
-  onNextMusicPLay(double duration) {
-    final durationTime = Duration(
-      milliseconds: (audioPlayer.duration == null ? 1 : audioPlayer.duration!.inMilliseconds * duration / 100).toInt(),
-    );
-    if (durationTime == audioPlayer.duration) {
-      audioPlayer.seekToNext();
-      indexMusic++;
-      if (indexMusic > musicModel.length - 1) {
-        indexMusic = 0;
-      }
-      isPlaying = true;
-      audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
-      audioPlayer.play();
-      emit(
-        MusicPlaylistLoaded(
-          musicList: musicModel,
-          musicModel: musicModel[indexMusic],
-          index: indexMusic,
-        ),
-      );
-    }
   }
 
   void setAudioPlayer(AudioPlayer audioPlayer) {
     this.audioPlayer = audioPlayer;
   }
 
-  void repeatFunc() {
+  void repeatFunc() async {
+    preferences = await SharedPreferences.getInstance();
     if (onTaprepeat == true) {
       audioPlayer.setLoopMode(LoopMode.one);
       onTaprepeat = false;
@@ -204,33 +205,37 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     );
     emit(
       MusicPlaylistLoaded(
-        musicList: musicModel,
-        musicModel: musicModel[indexMusic],
-        index: indexMusic,
+        musicList: musicList,
+        musicModel: musicList[preferences?.getInt("counter") ?? indexMusic],
+        index: preferences?.getInt("counter") ?? indexMusic,
       ),
     );
   }
 
   void randomMusicPlay() async {
+    preferences = await SharedPreferences.getInstance();
     var random = Random();
-    indexMusic = random.nextInt(musicModel.length);
+    indexMusic = random.nextInt(musicList.length);
+    preferences?.setInt("counter", indexMusic);
     carouselController.animateToPage(
       indexMusic,
       duration: const Duration(milliseconds: 1000),
     );
     isPlaying = true;
-    audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(musicModel[indexMusic].uri!)));
+    audioPlayer
+        .setAudioSource(AudioSource.uri(Uri.parse(musicList[preferences?.getInt("counter") ?? indexMusic].uri!)));
     audioPlayer.play();
     emit(
       MusicPlaylistLoaded(
-        musicList: musicModel,
-        musicModel: musicModel[indexMusic],
-        index: indexMusic,
+        musicList: musicList,
+        musicModel: musicList[preferences?.getInt("counter") ?? indexMusic],
+        index: preferences?.getInt("counter") ?? indexMusic,
       ),
     );
   }
 
-  void caruselSliderNext() {
+  void caruselSliderNext() async {
+    preferences = await SharedPreferences.getInstance();
     carouselController.animateToPage(
       indexMusic,
       duration: const Duration(milliseconds: 500),
@@ -238,10 +243,17 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
 
     emit(
       MusicPlaylistLoaded(
-        musicList: musicModel,
-        musicModel: musicModel[indexMusic],
-        index: indexMusic,
+        musicList: musicList,
+        musicModel: musicList[preferences?.getInt("counter") ?? indexMusic],
+        index: preferences?.getInt("counter") ?? indexMusic,
       ),
     );
+  }
+
+  void deletingMusic() async {
+    preferences = await SharedPreferences.getInstance();
+    filePathDeletingMusic = await audioPlayer.setAudioSource(
+        AudioSource.uri(Uri.parse(musicList[preferences?.getInt("counter") ?? indexMusic].uri!))) as File;
+    developer.log("added music model path");
   }
 }

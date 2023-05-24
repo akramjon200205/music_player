@@ -18,12 +18,10 @@ import 'custom_on_tap_icon_widget.dart';
 
 // ignore: must_be_immutable
 class CustomAppBar extends StatefulWidget {
-  int index;
   SongModel musicModel;
 
   CustomAppBar({
     Key? key,
-    required this.index,
     required this.musicModel,
   }) : super(key: key);
 

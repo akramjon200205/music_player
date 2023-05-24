@@ -115,7 +115,9 @@ class _CustomSliderState extends State<CustomSlider> {
             ),
             Text(
               formatTime(
-                context.read<MusicPlaylistCubit>().musicModel[context.read<MusicPlaylistCubit>().indexMusic],
+                context.read<MusicPlaylistCubit>().musicList[
+                    context.read<MusicPlaylistCubit>().preferences?.getInt("counter") ??
+                        context.read<MusicPlaylistCubit>().indexMusic],
               ),
               style: AppTextStyles.body14w4,
             ),
