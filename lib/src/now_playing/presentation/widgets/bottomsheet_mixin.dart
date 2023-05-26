@@ -241,15 +241,7 @@ class Bottomsheets {
                                   ),
                                 ],
                               ),
-                            ),
-                            // Center(
-                            //   child: Text(
-                            //     "${context.read<MusicPlaylistCubit>().preferences?.getInt('counter') ?? context.read<MusicPlaylistCubit>().indexMusic}",
-                            //     style: AppTextStyles.body24w5.copyWith(
-                            //       color: AppColors.white,
-                            //     ),
-                            //   ),
-                            // ),
+                            ),                           
                           ],
                         );
                       } else {
