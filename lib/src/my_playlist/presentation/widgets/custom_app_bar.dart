@@ -88,6 +88,7 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                     onTap: () {
                       showBottomSheet(
                         context: context,
+                        transitionAnimationController: controller,
                         builder: (context) => const NowPlaying(),
                       );
                       // playerBottomSheet(context, controller);
@@ -176,8 +177,8 @@ class SongWidget extends StatelessWidget {
       child: Text(
         text ?? "unknown",
         style: AppTextStyles.body13w4,
-        maxLines: 1,
-        overflow: TextOverflow.clip,
+        maxLines: 1,        
+        textAlign: TextAlign.center,
       ),
     );
   }

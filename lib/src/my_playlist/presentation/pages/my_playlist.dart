@@ -103,7 +103,8 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
                                   );
                                 } else if ((contextMusic.preferences?.getInt("counter") ?? state.index) == index) {
                                   showBottomSheet(
-                                    context: context,
+                                    context: context,                                    
+                                    transitionAnimationController: controller,
                                     builder: (context) {
                                       return const NowPlaying();
                                     },

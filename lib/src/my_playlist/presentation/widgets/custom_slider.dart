@@ -74,9 +74,10 @@ class _CustomSliderState extends State<CustomSlider> {
       ),
       child: Column(
         children: [
-          SizedBox(
-            height: 6.w,
+          Container(
+            height: 8.w,
             width: double.infinity,
+            alignment: Alignment.center,
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 activeTrackColor: widget.activeTrackColor,
@@ -88,8 +89,10 @@ class _CustomSliderState extends State<CustomSlider> {
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
                 overlayShape: const RoundSliderOverlayShape(overlayRadius: 0.0),
               ),
-              child: SizedBox(
+              child: Container(
                 width: double.infinity,
+                height: 6.w,
+                alignment: Alignment.center,
                 child: Slider(
                   min: 0,
                   max: 100,

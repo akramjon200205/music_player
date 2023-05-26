@@ -77,23 +77,25 @@ class CustomContainerWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: 150.w,
+                        width: 180.w,
                         child: Text(
                           musicModel.title,
                           style: AppTextStyles.body16w4,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
                         ),
                       ),
                       SizedBox(
                         height: 6.h,
                       ),
                       SizedBox(
-                        width: 150.w,
+                        width: 180.w,
                         child: Text(
                           musicModel.artist ?? "unknown",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
                           style: AppTextStyles.body16w4.copyWith(
                             color: Colors.white.withOpacity(0.5),
                           ),
