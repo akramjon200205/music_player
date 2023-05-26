@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:music_player/src/my_playlist/presentation/widgets/repeat_icon.dart';
+import 'package:music_player/src/now_playing/presentation/pages/now_playing.dart';
 import 'package:music_player/src/now_playing/presentation/widgets/bottomsheet_mixin.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -85,7 +86,11 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                   // ),
                   GestureDetector(
                     onTap: () {
-                      playerBottomSheet(context, controller);
+                      showBottomSheet(
+                        context: context,
+                        builder: (context) => const NowPlaying(),
+                      );
+                      // playerBottomSheet(context, controller);
                     },
                     child: ClipRect(
                       child: BackdropFilter(

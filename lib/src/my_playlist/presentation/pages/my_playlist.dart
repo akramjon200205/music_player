@@ -8,6 +8,7 @@ import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_s
 import 'package:music_player/src/now_playing/presentation/widgets/bottomsheet_mixin.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../now_playing/presentation/pages/now_playing.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_container_widget.dart';
 
@@ -68,7 +69,6 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
               BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
                 builder: (context, state) {
                   if (state is MusicPlaylistInitial) {
-                    
                     contextMusic.downloadMusics();
                     return const Center(
                       child: CircularProgressIndicator(),
@@ -102,7 +102,13 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
                                     index: contextMusic.preferences?.getInt("counter") ?? index,
                                   );
                                 } else if ((contextMusic.preferences?.getInt("counter") ?? state.index) == index) {
-                                  playerBottomSheet(context, controller);
+                                  showBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return const NowPlaying();
+                                    },
+                                  );
+                                  // playerBottomSheet(context, controller);
                                 }
                               },
                               child: CustomContainerWidget(
