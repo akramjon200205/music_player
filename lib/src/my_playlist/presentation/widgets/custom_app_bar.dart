@@ -86,11 +86,36 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                   // ),
                   GestureDetector(
                     onTap: () {
-                      showBottomSheet(
-                        context: context,
-                        transitionAnimationController: controller,
-                        builder: (context) => const NowPlaying(),
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation, secondaryAnimation) {
+                            return const NowPlaying();
+                          },
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            final Widget transition = SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0.0, 1.0),
+                                end: Offset.zero,
+                              ).animate(animation),
+                              child: SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: Offset.zero,
+                                  end: const Offset(0.0, -0.7),
+                                ).animate(secondaryAnimation),
+                                child: child,
+                              ),
+                            );
+                            return transition;
+                          },
+                          transitionDuration: const Duration(milliseconds: 500),
+                        ),
                       );
+                      // showBottomSheet(
+                      //   context: context,
+                      //   transitionAnimationController: controller,
+                      //   builder: (context) => const NowPlaying(),
+                      // );
                       // playerBottomSheet(context, controller);
                     },
                     child: ClipRect(
@@ -177,7 +202,7 @@ class SongWidget extends StatelessWidget {
       child: Text(
         text ?? "unknown",
         style: AppTextStyles.body13w4,
-        maxLines: 1,        
+        maxLines: 1,
         textAlign: TextAlign.center,
       ),
     );

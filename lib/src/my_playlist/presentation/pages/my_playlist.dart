@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_player/src/assets/assets.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
+import 'package:music_player/src/now_playing/presentation/pages/slide_transition.dart';
 import 'package:music_player/src/now_playing/presentation/widgets/bottomsheet_mixin.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -102,13 +103,38 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
                                     index: contextMusic.preferences?.getInt("counter") ?? index,
                                   );
                                 } else if ((contextMusic.preferences?.getInt("counter") ?? state.index) == index) {
-                                  showBottomSheet(
-                                    context: context,                                    
-                                    transitionAnimationController: controller,
-                                    builder: (context) {
-                                      return const NowPlaying();
-                                    },
+                                  Navigator.push(
+                                    context,
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation, secondaryAnimation) {
+                                        return const NowPlaying();
+                                      },
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        final Widget transition = SlideTransition(
+                                          position: Tween<Offset>(
+                                            begin: const Offset(0.0, 1.0),
+                                            end: Offset.zero,
+                                          ).animate(animation),
+                                          child: SlideTransition(
+                                            position: Tween<Offset>(
+                                              begin: Offset.zero,
+                                              end: const Offset(0.0, -0.7),
+                                            ).animate(secondaryAnimation),
+                                            child: child,
+                                          ),
+                                        );
+                                        return transition;
+                                      },
+                                      transitionDuration: const Duration(milliseconds: 500),
+                                    ),                                   
                                   );
+                                  // showBottomSheet(
+                                  //   context: context,
+                                  //   transitionAnimationController: controller,
+                                  //   builder: (context) {
+                                  //     return const NowPlaying();
+                                  //   },
+                                  // );
                                   // playerBottomSheet(context, controller);
                                 }
                               },
