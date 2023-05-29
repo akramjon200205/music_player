@@ -31,7 +31,7 @@ class _Icons extends _AssetsHolder {
   String get musicNote => '$basePath/music_note.svg';
   String get playMusic => '$basePath/play_music.svg';
   String get randomMusic => '$basePath/random_music.svg';
-  String get favorite => '$basePath/favoryte.svg';
+  String get favorite => '$basePath/favorite_heart.png';
   String get valume => '$basePath/valume.svg';
   String get valumeMute => '$basePath/valume_mute.svg';
 

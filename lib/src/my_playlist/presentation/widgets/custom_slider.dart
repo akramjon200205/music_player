@@ -74,40 +74,30 @@ class _CustomSliderState extends State<CustomSlider> {
       ),
       child: Column(
         children: [
-          Container(
-            height: 8.w,
-            width: double.infinity,
-            alignment: Alignment.center,
-            child: SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                activeTrackColor: widget.activeTrackColor,
-                inactiveTrackColor: Colors.white.withOpacity(0.5),
-                activeTickMarkColor: Colors.white.withOpacity(0.5),
-                trackShape: const RectangularSliderTrackShape(),
-                trackHeight: 4,
-                thumbColor: widget.thumbColor,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
-                overlayShape: const RoundSliderOverlayShape(overlayRadius: 0.0),
-              ),
-              child: Container(
-                width: double.infinity,
-                height: 6.w,
-                alignment: Alignment.center,
-                child: Slider(
-                  min: 0,
-                  max: 100,
-                  divisions: 100,
-                  value: sliderPosition,
-                  onChangeEnd: (value) {
-                    context.read<MusicPlaylistCubit>().onSeekMusic(
-                          Duration(
-                            milliseconds: audioPlayer.duration!.inMilliseconds * value ~/ 100,
-                          ),
-                        );
-                  },
-                  onChanged: (double value) {},
-                ),
-              ),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: widget.activeTrackColor,
+              inactiveTrackColor: Colors.white.withOpacity(0.5),
+              activeTickMarkColor: Colors.white.withOpacity(0.5),
+              trackShape: const RectangularSliderTrackShape(),
+              trackHeight: 4,
+              thumbColor: widget.thumbColor,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6.0),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 0.0),
+            ),
+            child: Slider(
+              min: 0,
+              max: 100,
+              divisions: 100,
+              value: sliderPosition,
+              onChangeEnd: (value) {
+                context.read<MusicPlaylistCubit>().onSeekMusic(
+                      Duration(
+                        milliseconds: audioPlayer.duration!.inMilliseconds * value ~/ 100,
+                      ),
+                    );
+              },
+              onChanged: (double value) {},
             ),
           ),
           SizedBox(

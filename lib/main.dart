@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/pages/my_playlist.dart';
+import 'package:music_player/src/now_playing/presentation/widgets/is_favorite.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,5 +31,8 @@ class MyApp extends StatelessWidget {
       },
       child: const MyPlayList(),
     );
+    // return const MaterialApp(
+    //   home: IsFavoriteMusic(),
+    // );
   }
 }

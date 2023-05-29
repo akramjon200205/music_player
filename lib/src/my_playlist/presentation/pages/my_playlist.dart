@@ -5,8 +5,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_player/src/assets/assets.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
-import 'package:music_player/src/now_playing/presentation/pages/slide_transition.dart';
-import 'package:music_player/src/now_playing/presentation/widgets/bottomsheet_mixin.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../now_playing/presentation/pages/now_playing.dart';
@@ -20,7 +18,7 @@ class MyPlayList extends StatefulWidget {
   State<MyPlayList> createState() => _MyPlayListState();
 }
 
-class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, Bottomsheets {
+class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
   Duration duration = Duration.zero;
   late AnimationController controller;
   AudioPlayer audioPlayer = AudioPlayer();
@@ -65,26 +63,26 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
               fit: BoxFit.fill,
             ),
           ),
-          child: Stack(
-            children: [
-              BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
-                builder: (context, state) {
-                  if (state is MusicPlaylistInitial) {
-                    contextMusic.downloadMusics();
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (state is MusicPlaylistLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (state is MusicPlaylistError) {
-                    return Center(
-                      child: Text(state.message),
-                    );
-                  } else if (state is MusicPlaylistLoaded) {
-                    return SingleChildScrollView(
+          child: BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
+            builder: (context, state) {
+              if (state is MusicPlaylistInitial) {
+                contextMusic.downloadMusics();
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is MusicPlaylistLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is MusicPlaylistError) {
+                return Center(
+                  child: Text(state.message),
+                );
+              } else if (state is MusicPlaylistLoaded) {
+                return Stack(
+                  children: [
+                    SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
                       child: SizedBox(
                         height: MediaQuery.of(context).size.height,
@@ -97,7 +95,6 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
                               onTap: () async {
                                 if ((contextMusic.preferences?.getInt("counter") ?? state.index) != index) {
                                   contextMusic.preferences?.setInt("counter", index);
-                                  // log("${context.read<MusicPlaylistCubit>().preferences?.getInt("counter")}");
                                   contextMusic.onTapMusicItem(
                                     music: state.musicList[contextMusic.preferences?.getInt("counter") ?? index],
                                     index: contextMusic.preferences?.getInt("counter") ?? index,
@@ -126,16 +123,8 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
                                         return transition;
                                       },
                                       transitionDuration: const Duration(milliseconds: 500),
-                                    ),                                   
+                                    ),
                                   );
-                                  // showBottomSheet(
-                                  //   context: context,
-                                  //   transitionAnimationController: controller,
-                                  //   builder: (context) {
-                                  //     return const NowPlaying();
-                                  //   },
-                                  // );
-                                  // playerBottomSheet(context, controller);
                                 }
                               },
                               child: CustomContainerWidget(
@@ -146,34 +135,126 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin, 
                           },
                         ),
                       ),
-                    );
-                  } else {
-                    return const Center(
-                      child: Text(
-                        "Error data",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                        ),
-                      ),
-                    );
-                  }
-                },
-              ),
-              BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
-                builder: (context, state) {
-                  if (state is MusicPlaylistLoaded) {
-                    return CustomAppBar(
+                    ),
+                    CustomAppBar(
                       musicModel: state.musicModel ??
                           state.musicList[contextMusic.preferences?.getInt("counter") ?? state.index],
-                    );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
-              ),
-            ],
+                    ),
+                  ],
+                );
+              } else {
+                return const Center(
+                  child: Text(
+                    "Error data",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                  ),
+                );
+              }
+            },
           ),
+          //  Stack(
+          //   children: [
+          //     BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
+          //       builder: (context, state) {
+          //         if (state is MusicPlaylistInitial) {
+          //           contextMusic.downloadMusics();
+          //           return const Center(
+          //             child: CircularProgressIndicator(),
+          //           );
+          //         }
+          //         if (state is MusicPlaylistLoading) {
+          //           return const Center(
+          //             child: CircularProgressIndicator(),
+          //           );
+          //         } else if (state is MusicPlaylistError) {
+          //           return Center(
+          //             child: Text(state.message),
+          //           );
+          //         } else if (state is MusicPlaylistLoaded) {
+          //           return SingleChildScrollView(
+          //             physics: const BouncingScrollPhysics(),
+          //             child: SizedBox(
+          //               height: MediaQuery.of(context).size.height,
+          //               child: ListView.builder(
+          //                 physics: const BouncingScrollPhysics(),
+          //                 padding: EdgeInsets.symmetric(horizontal: 18.w).copyWith(top: 70.h, bottom: 120.h),
+          //                 itemCount: state.musicList.length,
+          //                 itemBuilder: (context, index) {
+          //                   return InkWell(
+          //                     onTap: () async {
+          //                       if ((contextMusic.preferences?.getInt("counter") ?? state.index) != index) {
+          //                         contextMusic.preferences?.setInt("counter", index);
+          //                         contextMusic.onTapMusicItem(
+          //                           music: state.musicList[contextMusic.preferences?.getInt("counter") ?? index],
+          //                           index: contextMusic.preferences?.getInt("counter") ?? index,
+          //                         );
+          //                       } else if ((contextMusic.preferences?.getInt("counter") ?? state.index) == index) {
+          //                         Navigator.push(
+          //                           context,
+          //                           PageRouteBuilder(
+          //                             pageBuilder: (context, animation, secondaryAnimation) {
+          //                               return const NowPlaying();
+          //                             },
+          //                             transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          //                               final Widget transition = SlideTransition(
+          //                                 position: Tween<Offset>(
+          //                                   begin: const Offset(0.0, 1.0),
+          //                                   end: Offset.zero,
+          //                                 ).animate(animation),
+          //                                 child: SlideTransition(
+          //                                   position: Tween<Offset>(
+          //                                     begin: Offset.zero,
+          //                                     end: const Offset(0.0, -0.7),
+          //                                   ).animate(secondaryAnimation),
+          //                                   child: child,
+          //                                 ),
+          //                               );
+          //                               return transition;
+          //                             },
+          //                             transitionDuration: const Duration(milliseconds: 500),
+          //                           ),
+          //                         );
+          //                       }
+          //                     },
+          //                     child: CustomContainerWidget(
+          //                       musicModel: state.musicList[index],
+          //                       isActive: (contextMusic.preferences?.getInt("counter") ?? state.index) == index,
+          //                     ),
+          //                   );
+          //                 },
+          //               ),
+          //             ),
+          //           );
+          //         } else {
+          //           return const Center(
+          //             child: Text(
+          //               "Error data",
+          //               style: TextStyle(
+          //                 color: Colors.white,
+          //                 fontSize: 24,
+          //               ),
+          //             ),
+          //           );
+          //         }
+          //       },
+          //     ),
+          //     BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
+          //       builder: (context, state) {
+          //         if (state is MusicPlaylistLoaded) {
+          //           return CustomAppBar(
+          //             musicModel: state.musicModel ??
+          //                 state.musicList[contextMusic.preferences?.getInt("counter") ?? state.index],
+          //           );
+          //         } else {
+          //           return const SizedBox.shrink();
+          //         }
+          //       },
+          //     ),
+          //   ],
+          // ),
         ),
       ),
     );

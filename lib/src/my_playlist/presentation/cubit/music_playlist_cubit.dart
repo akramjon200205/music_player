@@ -18,8 +18,6 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
   CarouselController carouselController = CarouselController();
   int onTap = 0;
   late File filePathDeletingMusic;
-  bool onLongTap = false;
-
   SharedPreferences? preferences;
 
   late final AudioPlayer audioPlayer;
@@ -76,9 +74,12 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
         audioPlayer
             .setAudioSource(AudioSource.uri(Uri.parse(musicList[preferences?.getInt("counter") ?? indexMusic].uri!)));
         onTap = 1;
+        isPlaying = true;
+        audioPlayer.play();
+      } else {
+        isPlaying = true;
+        audioPlayer.play();
       }
-      isPlaying = true;
-      audioPlayer.play();
     }
 
     emit(MusicPlaylistLoading());

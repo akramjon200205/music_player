@@ -7,14 +7,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:music_player/src/my_playlist/presentation/widgets/repeat_icon.dart';
 import 'package:music_player/src/now_playing/presentation/pages/now_playing.dart';
-import 'package:music_player/src/now_playing/presentation/widgets/bottomsheet_mixin.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../../assets/app_colors.dart';
 import '../../../assets/app_text_styles.dart';
 import '../../../assets/assets.dart';
 import '../cubit/music_playlist_cubit.dart';
-import '../cubit/music_playlist_state.dart';
 import 'custom_on_tap_icon_widget.dart';
 
 // ignore: must_be_immutable
@@ -30,7 +28,7 @@ class CustomAppBar extends StatefulWidget {
   State<CustomAppBar> createState() => _CustomAppBarState();
 }
 
-class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMixin, Bottomsheets {
+class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMixin {
   late AnimationController controller;
   double valueSlider = 0;
 
@@ -55,132 +53,118 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
           ),
           decoration: BoxDecoration(gradient: AppColors.myPlayListContainerColor),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CustomOnTapIconWidget(
-                function: () {},
-                textAssetsIcon: Assets.icons.backLeft,
-              ),
+              // CustomOnTapIconWidget(
+              //   function: () {},
+              //   textAssetsIcon: Assets.icons.backLeft,
+              // ),
               Text(
                 'My Playlist',
                 style: AppTextStyles.body18w4,
               ),
-              CustomOnTapIconWidget(
-                function: () {},
-                textAssetsIcon: Assets.icons.menu,
-              ),
+              // CustomOnTapIconWidget(
+              //   function: () {},
+              //   textAssetsIcon: Assets.icons.menu,
+              // ),
             ],
           ),
         ),
-        BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
-          builder: (context, state) {
-            if (state is MusicPlaylistLoading) {
-              return const SizedBox.shrink();
-            } else if (state is MusicPlaylistLoaded) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // CustomSlider(
-                  //   activeTrackColor: const Color(0xff191234),
-                  //   thumbColor: const Color(0xff191234),
-                  // ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) {
-                            return const NowPlaying();
-                          },
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            final Widget transition = SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(0.0, 1.0),
-                                end: Offset.zero,
-                              ).animate(animation),
-                              child: SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: Offset.zero,
-                                  end: const Offset(0.0, -0.7),
-                                ).animate(secondaryAnimation),
-                                child: child,
-                              ),
-                            );
-                            return transition;
-                          },
-                          transitionDuration: const Duration(milliseconds: 500),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return const NowPlaying();
+                    },
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      final Widget transition = SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.0, 1.0),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: Offset.zero,
+                            end: const Offset(0.0, -0.7),
+                          ).animate(secondaryAnimation),
+                          child: child,
                         ),
                       );
-                      // showBottomSheet(
-                      //   context: context,
-                      //   transitionAnimationController: controller,
-                      //   builder: (context) => const NowPlaying(),
-                      // );
-                      // playerBottomSheet(context, controller);
+                      return transition;
                     },
-                    child: ClipRect(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          height: 98.h,
-                          padding: EdgeInsets.symmetric(horizontal: 28.w),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              CustomOnTapIconWidget(
-                                function: () {
-                                  context.read<MusicPlaylistCubit>().onTapLeftBack();
-                                },
-                                textAssetsIcon: Assets.icons.prevLeft,
-                              ),
-                              RepeatIcon(
-                                function: () {
-                                  context.read<MusicPlaylistCubit>().repeatFunc();
-                                },
-                                onTap: context.read<MusicPlaylistCubit>().onTaprepeat,
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SongWidget(text: widget.musicModel.title),
-                                  SizedBox(
-                                    height: 8.h,
-                                  ),
-                                  SongWidget(text: widget.musicModel.artist),
-                                ],
-                              ),
-                              CustomOnTapIconWidget(
-                                function: () {
-                                  context.read<MusicPlaylistCubit>().onTapPause();
-                                },
-                                textAssetsIcon: context.watch<MusicPlaylistCubit>().isPlaying
-                                    ? Assets.icons.pause
-                                    : Assets.icons.playMusic,
-                              ),
-                              CustomOnTapIconWidget(
-                                function: () {
-                                  context.read<MusicPlaylistCubit>().onTapNext();
-                                },
-                                textAssetsIcon: Assets.icons.nextRight,
-                              ),
-                            ],
-                          ),
+                    transitionDuration: const Duration(milliseconds: 500),
+                  ),
+                );
+              },
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    height: 98.h,
+                    padding: EdgeInsets.symmetric(horizontal: 28.w),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CustomOnTapIconWidget(
+                          function: () {
+                            context.read<MusicPlaylistCubit>().onTapLeftBack();
+                          },
+                          textAssetsIcon: Assets.icons.prevLeft,
                         ),
-                      ),
+                        const RepeatIcon(),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SongWidget(text: widget.musicModel.title),
+                            SizedBox(
+                              height: 8.h,
+                            ),
+                            SongWidget(text: widget.musicModel.artist),
+                          ],
+                        ),
+                        CustomOnTapIconWidget(
+                          function: () {
+                            context.read<MusicPlaylistCubit>().onTapPause();
+                          },
+                          textAssetsIcon: context.watch<MusicPlaylistCubit>().isPlaying
+                              ? Assets.icons.pause
+                              : Assets.icons.playMusic,
+                        ),
+                        CustomOnTapIconWidget(
+                          function: () {
+                            context.read<MusicPlaylistCubit>().onTapNext();
+                          },
+                          textAssetsIcon: Assets.icons.nextRight,
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
-          },
+                ),
+              ),
+            ),
+          ],
         ),
+        // BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
+        //   builder: (context, state) {
+        //     if (state is MusicPlaylistLoading) {
+        //       return const SizedBox.shrink();
+        //     } else if (state is MusicPlaylistLoaded) {
+        //        //
+        //     } else {
+        //       return const SizedBox.shrink();
+        //     }
+        //   },
+        // ),
       ],
     );
   }

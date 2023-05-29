@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:music_player/src/assets/app_colors.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
@@ -35,7 +36,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
           width: 280.w,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(40.r),
-            color: const Color(0xff1A1335).withOpacity(0.5),
+            color: AppColors.white.withOpacity(0.3),
           ),
           child: QueryArtworkWidget(
             id: contextRead.musicList[index].id,

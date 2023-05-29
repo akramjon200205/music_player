@@ -39,4 +39,5 @@ abstract class AppColors {
   );
 
   static const Color white = Colors.white;
+  static const Color favoriteColor = Color(0xff370E30);
 }

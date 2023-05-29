@@ -24,7 +24,38 @@ class NowPlaying extends StatefulWidget {
   State<NowPlaying> createState() => _NowPlayingState();
 }
 
-class _NowPlayingState extends State<NowPlaying> {
+class _NowPlayingState extends State<NowPlaying> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  late Animation<Color?> _colorAnimation;
+  bool isFav = false;
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+
+    _colorAnimation = ColorTween(begin: Colors.white, end: AppColors.favoriteColor).animate(_controller);
+    _animation = (TweenSequence<double>(<TweenSequenceItem<double>>[
+      TweenSequenceItem<double>(
+        tween: Tween(begin: 28, end: 35),
+        weight: 28,
+      ),
+      TweenSequenceItem<double>(
+        tween: Tween(begin: 35, end: 28),
+        weight: 28,
+      ),
+    ]).animate(_controller));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final contextRead = context.read<MusicPlaylistCubit>();
@@ -104,7 +135,6 @@ class _NowPlayingState extends State<NowPlaying> {
                             children: [
                               Container(
                                 alignment: Alignment.center,
-                                // width: 250.w,
                                 margin: EdgeInsets.symmetric(horizontal: 18.w),
                                 height: 30.h,
                                 child: Text(
@@ -199,12 +229,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                     ),
                                   ],
                                 ),
-                                RepeatIcon(
-                                  function: () {
-                                    context.read<MusicPlaylistCubit>().repeatFunc();
-                                  },
-                                  onTap: context.watch<MusicPlaylistCubit>().onTaprepeat,
-                                ),
+                                const RepeatIcon(),
                               ],
                             ),
                           ),
@@ -222,10 +247,33 @@ class _NowPlayingState extends State<NowPlaying> {
                                   },
                                   textAssetsIcon: Assets.icons.valume,
                                 ),
-                                CustomOnTapIconWidget(
-                                  function: () {},
-                                  textAssetsIcon: Assets.icons.favorite,
+                                AnimatedBuilder(
+                                  animation: _controller,
+                                  builder: (context, _) {
+                                    return Container(
+                                      alignment: Alignment.center,
+                                      child: IconButton(
+                                        alignment: Alignment.center,
+                                        onPressed: () {
+                                          if (_controller.isCompleted) {
+                                            _controller.reverse();
+                                          } else {
+                                            _controller.forward();
+                                          }
+                                        },
+                                        icon: Icon(
+                                          Icons.favorite,
+                                          size: _animation.value,
+                                          color: _colorAnimation.value,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
+                                // CustomOnTapIconWidget(
+                                //   function: () {},
+                                //   textAssetsIcon: Assets.icons.favorite,
+                                // ),
                               ],
                             ),
                           ),
