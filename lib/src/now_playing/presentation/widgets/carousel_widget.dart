@@ -36,7 +36,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
           width: 280.w,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(40.r),
-            color: AppColors.white.withOpacity(0.3),
+            color: AppColors.white.withOpacity(0.15),
           ),
           child: QueryArtworkWidget(
             id: contextRead.musicList[index].id,

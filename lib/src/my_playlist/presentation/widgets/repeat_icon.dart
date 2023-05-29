@@ -22,12 +22,10 @@ class _RepeatIconState extends State<RepeatIcon> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        return context.read<MusicPlaylistCubit>().repeatFunc();
-      },
+      onTap: () => context.read<MusicPlaylistCubit>().repeatFunc(),
       child: SizedBox(
-        width: 28.w,
-        height: 28.w,
+        width: 35.w,
+        height: 35.w,
         child: Stack(
           children: [
             Align(
@@ -42,7 +40,7 @@ class _RepeatIconState extends State<RepeatIcon> {
             Align(
               alignment: Alignment.center,
               child: Visibility(
-                visible: context.read<MusicPlaylistCubit>().onTaprepeat,
+                visible: context.watch<MusicPlaylistCubit>().onTaprepeat,
                 child: Text(
                   '1',
                   style: AppTextStyles.body10w4,
