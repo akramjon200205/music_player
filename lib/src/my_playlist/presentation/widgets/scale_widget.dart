@@ -95,12 +95,12 @@ class AnimatedTransformState
   }
 
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder description) {
-    super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<AlignmentGeometryTween>(
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<AlignmentGeometryTween>(
         'alignment', _alignment,
         showName: false, defaultValue: null));
-    description
+    properties
         .add(ObjectFlagProperty<Matrix4Tween>.has('transform', _transform));
   }
 }

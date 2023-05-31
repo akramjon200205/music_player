@@ -1,67 +1,31 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:music_player/src/assets/assets.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../now_playing/presentation/pages/now_playing.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_container_widget.dart';
-import '../widgets/scale_widget.dart';
+import 'package:music_player/src/my_playlist/presentation/widgets/custom_app_bar.dart';
+import 'package:music_player/src/my_playlist/presentation/widgets/custom_container_widget.dart';
+import 'package:music_player/src/my_playlist/presentation/widgets/scale_widget.dart';
+import 'package:music_player/src/now_playing/presentation/pages/now_playing.dart';
 
-class MyPlayList extends StatefulWidget {
-  const MyPlayList({super.key});
+import '../../../../assets/assets.dart';
+
+class Favorites extends StatefulWidget {
+  const Favorites({super.key});
 
   @override
-  State<MyPlayList> createState() => _MyPlayListState();
+  State<Favorites> createState() => _FavoritesState();
 }
 
-class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
-  Duration duration = Duration.zero;
-  late AnimationController controller;
-  AudioPlayer audioPlayer = AudioPlayer();
-  int? itemIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    requestStorage();
-    sharedPreferencesFunc();
-    context.read<MusicPlaylistCubit>().setAudioPlayer(audioPlayer);
-    controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
-  }
-
-  requestStorage() {
-    if (Platform.isAndroid) {
-      Permission.storage.request();
-    } else {
-      Permission.storage.request();
-    }
-  }
-
-  sharedPreferencesFunc() async {
-    context.read<MusicPlaylistCubit>().preferences = await SharedPreferences.getInstance();
-  }
-
-  @override
-  void dispose() {
-    audioPlayer.dispose();
-    super.dispose();
-  }
-
+class _FavoritesState extends State<Favorites> {
   @override
   Widget build(BuildContext context) {
-    final contextMusic = context.read<MusicPlaylistCubit>();
+  final contextMusic = context.read<MusicPlaylistCubit>();
     return SafeArea(
       child: Scaffold(
         body: Container(
           height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width,          
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
@@ -141,7 +105,7 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                               time: 50,
                               isWait: true,
                             );
-                          },
+                          },                          
                         ),
                       ),
                     ),

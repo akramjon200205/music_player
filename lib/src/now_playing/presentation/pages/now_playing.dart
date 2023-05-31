@@ -257,7 +257,7 @@ class _NowPlayingState extends State<NowPlaying> with SingleTickerProviderStateM
                                             _controller.reverse();
                                           } else {
                                             _controller.forward();
-                                          }
+                                          }                                         
                                         },
                                         icon: Icon(
                                           Icons.favorite,
@@ -267,7 +267,7 @@ class _NowPlayingState extends State<NowPlaying> with SingleTickerProviderStateM
                                       ),
                                     );
                                   },
-                                ),                            
+                                ),
                               ],
                             ),
                           ),

@@ -1,7 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../../assets/app_text_styles.dart';
@@ -61,11 +63,11 @@ class CustomContainerWidget extends StatelessWidget {
                             artworkFit: BoxFit.fill,
                           ),
                         ),
-                        // boolean()
-                        //     ? PlayAndPauseWidget(
-                        //         onTap: onTapPause,
-                        //       )
-                        //     : const SizedBox.shrink(),
+                        isActive
+                            ? PlayAndPauseWidget(
+                                onTap: context.watch<MusicPlaylistCubit>().isPlaying,
+                              )
+                            : const SizedBox.shrink(),
                       ],
                     ),
                   ),
@@ -118,7 +120,9 @@ class CustomContainerWidget extends StatelessWidget {
             ],
           ),
         ),
-        
+        SizedBox(
+          height: 20.h,
+        ),
       ],
     );
   }
@@ -145,7 +149,7 @@ class PlayAndPauseWidget extends StatelessWidget {
           color: Colors.white.withOpacity(.3),
         ),
         child: SvgPicture.asset(
-          onTap ? Assets.icons.playMusic : Assets.icons.pause,
+          onTap ? Assets.icons.pause : Assets.icons.playMusic,
           height: 10.w,
           width: 12.w,
           fit: BoxFit.scaleDown,

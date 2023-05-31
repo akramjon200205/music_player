@@ -27,7 +27,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
         enableInfiniteScroll: false,
         enlargeStrategy: CenterPageEnlargeStrategy.height,
         initialPage: contextRead.preferences?.getInt("counter") ?? contextRead.indexMusic,
-        autoPlay: false,
+        autoPlay: false,        
         scrollPhysics: const NeverScrollableScrollPhysics(),
       ),
       itemBuilder: (context, index, realIndex) {
@@ -42,7 +42,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
             id: contextRead.musicList[index].id,
             type: ArtworkType.AUDIO,
             artworkBorder: BorderRadius.circular(40.r),
-            artworkFit: BoxFit.fill,
+            artworkFit: BoxFit.cover,
           ),
         );
       },

@@ -23,15 +23,8 @@ class MyApp extends StatelessWidget {
             home: child,
           ),
         );
-        // return MaterialApp(
-        //   debugShowCheckedModeBanner: false,
-        //   home: child,
-        // );
       },
       child: const MyPlayList(),
     );
-    // return const MaterialApp(
-    //   home: IsFavoriteMusic(),
-    // );
   }
 }

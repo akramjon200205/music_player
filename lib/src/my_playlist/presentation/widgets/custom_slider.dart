@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
-
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 
 import '../../../assets/app_text_styles.dart';
