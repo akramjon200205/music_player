@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +8,7 @@ import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_c
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
 import 'package:music_player/src/my_playlist/presentation/widgets/repeat_icon.dart';
 import 'package:music_player/src/now_playing/presentation/widgets/carousel_widget.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import '../../../assets/app_colors.dart';
 import '../../../assets/app_text_styles.dart';
 import '../../../assets/assets.dart';
@@ -26,7 +28,9 @@ class _NowPlayingState extends State<NowPlaying> with SingleTickerProviderStateM
   late AnimationController _controller;
   late Animation<double> _animation;
   late Animation<Color?> _colorAnimation;
+
   bool isFav = false;
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +39,12 @@ class _NowPlayingState extends State<NowPlaying> with SingleTickerProviderStateM
       duration: const Duration(milliseconds: 300),
     );
 
-    _colorAnimation = ColorTween(begin: Colors.white, end: AppColors.favoriteColor).animate(_controller);
+    if (context.read<MusicPlaylistCubit>().favoriteMusic.contains(context.read<MusicPlaylistCubit>().indexMusic)) {
+      _colorAnimation = ColorTween(begin: AppColors.favoriteColor, end: Colors.white).animate(_controller);
+    } else {
+      _colorAnimation = ColorTween(begin: Colors.white, end: AppColors.favoriteColor).animate(_controller);
+    }
+
     _animation = (TweenSequence<double>(<TweenSequenceItem<double>>[
       TweenSequenceItem<double>(
         tween: Tween(begin: 28, end: 35),
@@ -253,11 +262,19 @@ class _NowPlayingState extends State<NowPlaying> with SingleTickerProviderStateM
                                       child: IconButton(
                                         alignment: Alignment.center,
                                         onPressed: () {
+                                          if (_colorAnimation.value == Colors.white) {
+                                            contextRead.favoriteMusic.add(contextRead.indexMusic);
+                                            developer.log(contextRead.favoriteMusic.length.toString());
+                                          } else {
+                                            contextRead.favoriteMusic
+                                                .removeWhere((element) => element == contextRead.indexMusic);
+                                            developer.log(contextRead.favoriteMusic.length.toString());
+                                          }
                                           if (_controller.isCompleted) {
                                             _controller.reverse();
                                           } else {
                                             _controller.forward();
-                                          }                                         
+                                          }
                                         },
                                         icon: Icon(
                                           Icons.favorite,

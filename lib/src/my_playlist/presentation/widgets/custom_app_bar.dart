@@ -18,10 +18,12 @@ import 'custom_on_tap_icon_widget.dart';
 // ignore: must_be_immutable
 class CustomAppBar extends StatefulWidget {
   SongModel musicModel;
+  bool isFavorite;
 
   CustomAppBar({
     Key? key,
     required this.musicModel,
+    this.isFavorite = false,
   }) : super(key: key);
 
   @override
@@ -53,20 +55,26 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
           ),
           decoration: BoxDecoration(gradient: AppColors.myPlayListContainerColor),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: widget.isFavorite ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
             children: [
-              // CustomOnTapIconWidget(
-              //   function: () {},
-              //   textAssetsIcon: Assets.icons.backLeft,
-              // ),
-              Text(
-                'My Playlist',
-                style: AppTextStyles.body18w4,
-              ),
-              // CustomOnTapIconWidget(
-              //   function: () {},
-              //   textAssetsIcon: Assets.icons.menu,
-              // ),
+              widget.isFavorite
+                  ? CustomOnTapIconWidget(
+                      function: () {
+                        Navigator.pop(context);
+                      },
+                      textAssetsIcon: Assets.icons.backLeft,
+                    )
+                  : const SizedBox.shrink(),
+              widget.isFavorite
+                  ? Text(
+                      'Favorites',
+                      style: AppTextStyles.body18w4,
+                    )
+                  : Text(
+                      'My Playlist',
+                      style: AppTextStyles.body18w4,
+                    ),
+              const SizedBox.shrink()
             ],
           ),
         ),
@@ -154,17 +162,6 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
             ),
           ],
         ),
-        // BlocBuilder<MusicPlaylistCubit, MusicPlaylistState>(
-        //   builder: (context, state) {
-        //     if (state is MusicPlaylistLoading) {
-        //       return const SizedBox.shrink();
-        //     } else if (state is MusicPlaylistLoaded) {
-        //        //
-        //     } else {
-        //       return const SizedBox.shrink();
-        //     }
-        //   },
-        // ),
       ],
     );
   }

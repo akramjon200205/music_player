@@ -4,35 +4,37 @@ import 'package:flutter/material.dart';
 Widget scaleWidget(
     {required Widget child,
     required Function onTap,
+    required Function onLongPress,
     double scale = 0.9,
     int time = 100,
     bool isWait = false}) {
   bool pressed = false;
   return StatefulBuilder(
-      builder: (context, setState) => GestureDetector(
-            onTap: () {
-              setState(() => pressed = true);
-              Future.delayed(Duration(milliseconds: time), () async {
-                setState(() => pressed = false);
-                if (isWait) {
-                  onTap();
-                } else {
-                  Future.delayed(Duration(milliseconds: time), () async {
-                    onTap();
-                  });
-                }
-              });
-            },
-            child: AnimatedTransform(
-              transform: Matrix4.diagonal3Values(
-                  pressed ? scale : 1, pressed ? scale : 1, 1.0),
-              transformHitTests: true,
-              duration: Duration(milliseconds: time),
-              curve: Curves.easeOut,
-              alignment: Alignment.center,
-              child: child,
-            ),
-          ));
+    builder: (context, setState) => GestureDetector(
+      onLongPress: () => onLongPress(),
+      onTap: () {
+        setState(() => pressed = true);
+        Future.delayed(Duration(milliseconds: time), () async {
+          setState(() => pressed = false);
+          if (isWait) {
+            onTap();
+          } else {
+            Future.delayed(Duration(milliseconds: time), () async {
+              onTap();
+            });
+          }
+        });
+      },
+      child: AnimatedTransform(
+        transform: Matrix4.diagonal3Values(pressed ? scale : 1, pressed ? scale : 1, 1.0),
+        transformHitTests: true,
+        duration: Duration(milliseconds: time),
+        curve: Curves.easeOut,
+        alignment: Alignment.center,
+        child: child,
+      ),
+    ),
+  );
 }
 
 class AnimatedTransform extends ImplicitlyAnimatedWidget {
@@ -65,22 +67,17 @@ class AnimatedTransform extends ImplicitlyAnimatedWidget {
   AnimatedTransformState createState() => AnimatedTransformState();
 }
 
-class AnimatedTransformState
-    extends AnimatedWidgetBaseState<AnimatedTransform> {
+class AnimatedTransformState extends AnimatedWidgetBaseState<AnimatedTransform> {
   AlignmentGeometryTween? _alignment;
   Matrix4Tween? _transform;
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
     _alignment = visitor(
-            _alignment,
-            widget.alignment,
-            (dynamic value) =>
-                AlignmentGeometryTween(begin: value as AlignmentGeometry))
+            _alignment, widget.alignment, (dynamic value) => AlignmentGeometryTween(begin: value as AlignmentGeometry))
         as AlignmentGeometryTween;
-    _transform = visitor(_transform, widget.transform,
-            (dynamic value) => Matrix4Tween(begin: value as Matrix4))
-        as Matrix4Tween;
+    _transform =
+        visitor(_transform, widget.transform, (dynamic value) => Matrix4Tween(begin: value as Matrix4)) as Matrix4Tween;
   }
 
   @override
@@ -97,10 +94,8 @@ class AnimatedTransformState
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<AlignmentGeometryTween>(
-        'alignment', _alignment,
-        showName: false, defaultValue: null));
     properties
-        .add(ObjectFlagProperty<Matrix4Tween>.has('transform', _transform));
+        .add(DiagnosticsProperty<AlignmentGeometryTween>('alignment', _alignment, showName: false, defaultValue: null));
+    properties.add(ObjectFlagProperty<Matrix4Tween>.has('transform', _transform));
   }
 }

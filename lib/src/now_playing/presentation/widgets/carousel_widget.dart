@@ -27,7 +27,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
         enableInfiniteScroll: false,
         enlargeStrategy: CenterPageEnlargeStrategy.height,
         initialPage: contextRead.preferences?.getInt("counter") ?? contextRead.indexMusic,
-        autoPlay: false,        
+        autoPlay: false,
         scrollPhysics: const NeverScrollableScrollPhysics(),
       ),
       itemBuilder: (context, index, realIndex) {

@@ -4,11 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
 import 'package:music_player/src/my_playlist/presentation/widgets/custom_app_bar.dart';
-import 'package:music_player/src/my_playlist/presentation/widgets/custom_container_widget.dart';
 import 'package:music_player/src/my_playlist/presentation/widgets/scale_widget.dart';
 import 'package:music_player/src/now_playing/presentation/pages/now_playing.dart';
 
-import '../../../../assets/assets.dart';
+import '../../assets/assets.dart';
+import '../widgets/favorites_container.dart';
 
 class Favorites extends StatefulWidget {
   const Favorites({super.key});
@@ -20,12 +20,12 @@ class Favorites extends StatefulWidget {
 class _FavoritesState extends State<Favorites> {
   @override
   Widget build(BuildContext context) {
-  final contextMusic = context.read<MusicPlaylistCubit>();
+    final contextMusic = context.read<MusicPlaylistCubit>();
     return SafeArea(
       child: Scaffold(
         body: Container(
           height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,          
+          width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
@@ -60,15 +60,18 @@ class _FavoritesState extends State<Favorites> {
                         child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
                           padding: EdgeInsets.symmetric(horizontal: 18.w).copyWith(top: 70.h, bottom: 120.h),
-                          itemCount: state.musicList.length,
+                          itemCount: contextMusic.favoriteMusic.length,
                           itemBuilder: (context, index) {
                             return scaleWidget(
+                              onLongPress: () {},
                               onTap: () async {
                                 if ((contextMusic.preferences?.getInt("counter") ?? state.index) != index) {
-                                  contextMusic.preferences?.setInt("counter", index);
+                                  contextMusic.preferences?.setInt("counter", contextMusic.favoriteMusic[index]);
                                   contextMusic.onTapMusicItem(
-                                    music: state.musicList[contextMusic.preferences?.getInt("counter") ?? index],
-                                    index: contextMusic.preferences?.getInt("counter") ?? index,
+                                    music: state.musicList[contextMusic.preferences?.getInt("counter") ??
+                                        contextMusic.favoriteMusic[index]],
+                                    index: contextMusic.preferences?.getInt("counter") ??
+                                        contextMusic.favoriteMusic[index],
                                   );
                                 } else if ((contextMusic.preferences?.getInt("counter") ?? state.index) == index) {
                                   Navigator.push(
@@ -98,20 +101,22 @@ class _FavoritesState extends State<Favorites> {
                                   );
                                 }
                               },
-                              child: CustomContainerWidget(
-                                musicModel: state.musicList[index],
-                                isActive: (contextMusic.preferences?.getInt("counter") ?? state.index) == index,
+                              child: FavoritesContainer(
+                                musicModel: state.musicList[contextMusic.favoriteMusic[index]],
+                                isActive: (contextMusic.preferences?.getInt("counter") ?? state.index) ==
+                                    contextMusic.favoriteMusic[index],
                               ),
                               time: 50,
                               isWait: true,
                             );
-                          },                          
+                          },
                         ),
                       ),
                     ),
                     CustomAppBar(
                       musicModel: state.musicModel ??
                           state.musicList[contextMusic.preferences?.getInt("counter") ?? state.index],
+                      isFavorite: true,
                     ),
                   ],
                 );

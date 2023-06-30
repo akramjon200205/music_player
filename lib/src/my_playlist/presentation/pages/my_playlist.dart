@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/src/assets/assets.dart';
+import 'package:music_player/src/favorites/pages/favorites_page.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -99,6 +101,17 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                           itemCount: state.musicList.length,
                           itemBuilder: (context, index) {
                             return scaleWidget(
+                              onLongPress: () {
+                                log("Long pressed func");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return const Favorites();
+                                    },
+                                  ),
+                                );
+                              },
                               onTap: () async {
                                 if ((contextMusic.preferences?.getInt("counter") ?? state.index) != index) {
                                   contextMusic.preferences?.setInt("counter", index);
@@ -107,31 +120,7 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                                     index: contextMusic.preferences?.getInt("counter") ?? index,
                                   );
                                 } else if ((contextMusic.preferences?.getInt("counter") ?? state.index) == index) {
-                                  Navigator.push(
-                                    context,
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation, secondaryAnimation) {
-                                        return const NowPlaying();
-                                      },
-                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                        final Widget transition = SlideTransition(
-                                          position: Tween<Offset>(
-                                            begin: const Offset(0.0, 1.0),
-                                            end: Offset.zero,
-                                          ).animate(animation),
-                                          child: SlideTransition(
-                                            position: Tween<Offset>(
-                                              begin: Offset.zero,
-                                              end: const Offset(0.0, -0.7),
-                                            ).animate(secondaryAnimation),
-                                            child: child,
-                                          ),
-                                        );
-                                        return transition;
-                                      },
-                                      transitionDuration: const Duration(milliseconds: 500),
-                                    ),
-                                  );
+                                  navigatorNowPlaying();
                                 }
                               },
                               child: CustomContainerWidget(
@@ -165,6 +154,34 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  navigatorNowPlaying() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return const NowPlaying();
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final Widget transition = SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.0, 1.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: Offset.zero,
+                end: const Offset(0.0, -0.7),
+              ).animate(secondaryAnimation),
+              child: child,
+            ),
+          );
+          return transition;
+        },
+        transitionDuration: const Duration(milliseconds: 500),
       ),
     );
   }

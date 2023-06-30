@@ -12,17 +12,21 @@ import 'dart:math';
 
 class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
   late List<SongModel> musicList = [];
+  late List<int> favoriteMusic = [];
+
+  late File filePathDeletingMusic;
+  late final AudioPlayer audioPlayer;
+
   int indexMusic = 0;
+
   bool onTaprepeat = false;
   bool isPlaying = false;
-  List<SongModel> favoriteMusicList = [];
+  bool onTap = false;
+
   OnAudioQuery audioQuery = OnAudioQuery();
   CarouselController carouselController = CarouselController();
-  bool onTap = false;
-  late File filePathDeletingMusic;
   SharedPreferences? preferences;
 
-  late final AudioPlayer audioPlayer;
   MusicPlaylistCubit() : super(MusicPlaylistInitial());
 
   void downloadMusics() async {
