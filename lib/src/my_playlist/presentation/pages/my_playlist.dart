@@ -122,6 +122,7 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                                 } else if ((contextMusic.preferences?.getInt("counter") ?? state.index) == index) {
                                   navigatorNowPlaying();
                                 }
+                                log("${context.read<MusicPlaylistCubit>().favoriteMusic.length}");
                               },
                               child: CustomContainerWidget(
                                 musicModel: state.musicList[index],

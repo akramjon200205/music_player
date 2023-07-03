@@ -14,6 +14,11 @@ import '../../../now_playing/presentation/widgets/duration_music.dart';
 class CustomContainerWidget extends StatelessWidget {
   bool isActive;
   SongModel musicModel;
+  final Widget image = SvgPicture.asset(
+    Assets.icons.musicNote,
+    height: 50,
+    fit: BoxFit.scaleDown,
+  );
 
   CustomContainerWidget({
     Key? key,

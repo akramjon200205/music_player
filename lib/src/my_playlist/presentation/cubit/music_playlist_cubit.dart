@@ -109,7 +109,7 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     );
   }
 
-  void onTapLeftBack() async {
+  void onTapLeftBack([int? index]) async {
     audioPlayer.seekToNext();
     indexMusic--;
     preferences = await SharedPreferences.getInstance();
@@ -172,7 +172,7 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     );
   }
 
-  void onTapNext() async {
+  void onTapNext([int? index]) async {
     audioPlayer.seekToNext();
     indexMusic++;
     preferences = await SharedPreferences.getInstance();

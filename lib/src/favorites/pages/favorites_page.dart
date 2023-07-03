@@ -19,7 +19,12 @@ class Favorites extends StatefulWidget {
 
 class _FavoritesState extends State<Favorites> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {    
     final contextMusic = context.read<MusicPlaylistCubit>();
     return SafeArea(
       child: Scaffold(

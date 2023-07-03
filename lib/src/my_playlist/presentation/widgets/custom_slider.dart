@@ -28,7 +28,7 @@ class _CustomSliderState extends State<CustomSlider> {
   @override
   void initState() {
     audioPlayer = context.read<MusicPlaylistCubit>().audioPlayer;
-
+    
     audioPlayer.positionStream.listen((event) {
       setState(() {
         sliderPosition = event.inSeconds / (audioPlayer.duration == null ? 1 : audioPlayer.duration!.inSeconds) * 100;
@@ -71,6 +71,9 @@ class _CustomSliderState extends State<CustomSlider> {
       padding: EdgeInsets.symmetric(
         vertical: 5.h,
       ),
+      margin: EdgeInsets.symmetric(
+        horizontal: 20.w,
+      ),
       child: Column(
         children: [
           SliderTheme(
@@ -102,22 +105,25 @@ class _CustomSliderState extends State<CustomSlider> {
           SizedBox(
             height: 4.h,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                positionMusic(),
-                style: AppTextStyles.body14w4,
-              ),
-              Text(
-                formatTime(
-                  context.read<MusicPlaylistCubit>().musicList[
-                      context.read<MusicPlaylistCubit>().preferences?.getInt("counter") ??
-                          context.read<MusicPlaylistCubit>().indexMusic],
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 7.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  positionMusic(),
+                  style: AppTextStyles.body14w4,
                 ),
-                style: AppTextStyles.body14w4,
-              ),
-            ],
+                Text(
+                  formatTime(
+                    context.read<MusicPlaylistCubit>().musicList[
+                        context.read<MusicPlaylistCubit>().preferences?.getInt("counter") ??
+                            context.read<MusicPlaylistCubit>().indexMusic],
+                  ),
+                  style: AppTextStyles.body14w4,
+                ),
+              ],
+            ),
           ),
         ],
       ),

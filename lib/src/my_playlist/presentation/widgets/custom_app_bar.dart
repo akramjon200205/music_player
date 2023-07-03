@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:on_audio_query/on_audio_query.dart';
 import 'package:music_player/src/my_playlist/presentation/widgets/repeat_icon.dart';
 import 'package:music_player/src/now_playing/presentation/pages/now_playing.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../../assets/app_colors.dart';
 import '../../../assets/app_text_styles.dart';
@@ -19,11 +19,13 @@ import 'custom_on_tap_icon_widget.dart';
 class CustomAppBar extends StatefulWidget {
   SongModel musicModel;
   bool isFavorite;
+  int? index;
 
   CustomAppBar({
     Key? key,
     required this.musicModel,
     this.isFavorite = false,
+    this.index,
   }) : super(key: key);
 
   @override
@@ -107,7 +109,7 @@ class _CustomAppBarState extends State<CustomAppBar> with TickerProviderStateMix
                     },
                     transitionDuration: const Duration(milliseconds: 500),
                   ),
-                );
+                );                
               },
               child: ClipRect(
                 child: BackdropFilter(

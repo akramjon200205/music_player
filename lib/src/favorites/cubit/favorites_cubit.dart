@@ -7,8 +7,8 @@ part 'favorites_state.dart';
 
 class FavoritesCubit extends Cubit<FavoritesState> {
   FavoritesCubit() : super(FavoritesInitial());
-  var musicListCubit = MusicPlaylistCubit().musicList;
-  List<SongModel> favoritesList = [];
-
-  
+  List<int> musicListCubit = MusicPlaylistCubit().favoriteMusic;
+  List<SongModel> musicListFavorite = [];
+  int indexMusic = 0;
+  bool isPlaying = false;
 }
