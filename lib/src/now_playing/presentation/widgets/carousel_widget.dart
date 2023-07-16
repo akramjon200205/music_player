@@ -21,7 +21,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
   @override
   Widget build(BuildContext context) {
     final contextRead = context.read<MusicPlaylistCubit>();
-    return CarouselSlider.builder(
+    return CarouselSlider.builder(      
       itemCount: contextRead.musicList.length,
       carouselController: context.read<MusicPlaylistCubit>().carouselController,
       options: CarouselOptions(

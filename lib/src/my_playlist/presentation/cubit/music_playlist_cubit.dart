@@ -2,7 +2,6 @@ import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -138,40 +137,6 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
     );
   }
 
-  void onTapLeftBackNowPlaying() async {
-    audioPlayer.seekToNext();
-    indexMusic--;
-    preferences = await SharedPreferences.getInstance();
-    if (indexMusic >= 0) {
-      preferences?.setInt("counter", indexMusic);
-    }
-    if (indexMusic < 0) {
-      indexMusic = musicList.length - 1;
-      preferences?.setInt("counter", indexMusic);
-    }
-    carouselController.animateToPage(
-      indexMusic,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
-    isPlaying = true;
-    audioPlayer.setAudioSource(
-      AudioSource.uri(
-        Uri.parse(
-          musicList[preferences?.getInt("counter") ?? indexMusic].uri!,
-        ),
-      ),
-    );
-    audioPlayer.play();
-    emit(
-      MusicPlaylistLoaded(
-        musicList: musicList,
-        musicModel: musicList[preferences?.getInt("counter") ?? indexMusic],
-        index: preferences?.getInt("counter") ?? indexMusic,
-      ),
-    );
-  }
-
   void onTapNext([int? index]) async {
     audioPlayer.seekToNext();
     indexMusic++;
@@ -190,40 +155,6 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       ),
     );
     audioPlayer.play();
-    emit(
-      MusicPlaylistLoaded(
-        musicList: musicList,
-        musicModel: musicList[preferences?.getInt("counter") ?? indexMusic],
-        index: preferences?.getInt("counter") ?? indexMusic,
-      ),
-    );
-  }
-
-  void onTapNextNowPlaying() async {
-    audioPlayer.seekToNext();
-    indexMusic++;
-    preferences = await SharedPreferences.getInstance();
-    preferences?.setInt("counter", indexMusic);
-    if ((preferences?.getInt("counter") ?? indexMusic) > musicList.length - 1) {
-      indexMusic = 0;
-      preferences?.setInt("counter", indexMusic);
-    }
-    isPlaying = true;
-    audioPlayer.setAudioSource(
-      AudioSource.uri(
-        Uri.parse(
-          musicList[preferences?.getInt("counter") ?? indexMusic].uri!,
-        ),
-      ),
-    );
-    audioPlayer.play();
-
-    carouselController.animateToPage(
-      indexMusic,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
-
     emit(
       MusicPlaylistLoaded(
         musicList: musicList,
@@ -295,7 +226,6 @@ class MusicPlaylistCubit extends Cubit<MusicPlaylistState> {
       indexMusic,
       duration: const Duration(milliseconds: 500),
     );
-
     emit(
       MusicPlaylistLoaded(
         musicList: musicList,

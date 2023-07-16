@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/src/assets/assets.dart';
-import 'package:music_player/src/favorites/pages/favorites_page.dart';
+import 'package:music_player/src/deleting_music/presentation/pages/deleting_music.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_state.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -101,13 +101,12 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                           itemCount: state.musicList.length,
                           itemBuilder: (context, index) {
                             return scaleWidget(
-                              onLongPress: () {
-                                log("Long pressed func");
+                              onLongPress: () {                                
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return const Favorites();
+                                      return const DeletingMusic();
                                     },
                                   ),
                                 );
@@ -159,7 +158,7 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
     );
   }
 
-  navigatorNowPlaying() {
+  void navigatorNowPlaying() {
     Navigator.push(
       context,
       PageRouteBuilder(
