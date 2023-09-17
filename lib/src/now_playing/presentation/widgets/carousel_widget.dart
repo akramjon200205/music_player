@@ -47,7 +47,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
             type: ArtworkType.AUDIO,
             artworkBorder: BorderRadius.circular(30.r),
             artworkFit: BoxFit.fill,
-            imageSized: 200,            
+            // imageSized: 200,            
           ),
         );
       },

@@ -102,14 +102,14 @@ class _MyPlayListState extends State<MyPlayList> with TickerProviderStateMixin {
                           itemBuilder: (context, index) {
                             return scaleWidget(
                               onLongPress: () {                                
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return const DeletingMusic();
-                                    },
-                                  ),
-                                );
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) {
+                                      
+                                //     },
+                                //   ),
+                                // );
                               },
                               onTap: () async {
                                 if ((contextMusic.preferences?.getInt("counter") ?? state.index) != index) {
