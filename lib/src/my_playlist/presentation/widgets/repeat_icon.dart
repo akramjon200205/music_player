@@ -6,14 +6,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:music_player/src/assets/app_text_styles.dart';
 import 'package:music_player/src/assets/assets.dart';
 
+import '../cubit/music_playlist_cubit.dart';
+
 // ignore: must_be_immutable
 class RepeatIcon extends StatefulWidget {
-  Function function;
-  bool onTap;
-  RepeatIcon({
+  const RepeatIcon({
     Key? key,
-    required this.function,
-    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -24,10 +22,10 @@ class _RepeatIconState extends State<RepeatIcon> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => widget.function(),
+      onTap: () => context.read<MusicPlaylistCubit>().repeatFunc(),
       child: SizedBox(
-        width: 28.w,
-        height: 28.w,        
+        width: 35.w,
+        height: 35.w,
         child: Stack(
           children: [
             Align(
@@ -42,7 +40,7 @@ class _RepeatIconState extends State<RepeatIcon> {
             Align(
               alignment: Alignment.center,
               child: Visibility(
-                visible: widget.onTap,
+                visible: context.watch<MusicPlaylistCubit>().onTaprepeat,
                 child: Text(
                   '1',
                   style: AppTextStyles.body10w4,

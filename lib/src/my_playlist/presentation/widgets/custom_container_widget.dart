@@ -1,10 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:marquee/marquee.dart';
-
-import 'package:music_player/src/core/model/music_model.dart';
+import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../../../assets/app_text_styles.dart';
@@ -15,6 +14,11 @@ import '../../../now_playing/presentation/widgets/duration_music.dart';
 class CustomContainerWidget extends StatelessWidget {
   bool isActive;
   SongModel musicModel;
+  final Widget image = SvgPicture.asset(
+    Assets.icons.musicNote,
+    height: 50,
+    fit: BoxFit.scaleDown,
+  );
 
   CustomContainerWidget({
     Key? key,
@@ -24,13 +28,11 @@ class CustomContainerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Column(
       children: [
         Container(
           width: double.infinity,
-          height: 80.h,
+          height: 80.w,
           padding: EdgeInsets.only(left: 10.w, right: 16.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.r),
@@ -64,14 +66,13 @@ class CustomContainerWidget extends StatelessWidget {
                             type: ArtworkType.AUDIO,
                             artworkBorder: BorderRadius.circular(10.r),
                             artworkFit: BoxFit.fill,
-                            imageSized: 28.h,
-                          ),                          
+                          ),
                         ),
-                        // boolean()
-                        //     ? PlayAndPauseWidget(
-                        //         onTap: onTapPause,
-                        //       )
-                        //     : const SizedBox.shrink(),
+                        isActive
+                            ? PlayAndPauseWidget(
+                                onTap: context.watch<MusicPlaylistCubit>().isPlaying,
+                              )
+                            : const SizedBox.shrink(),
                       ],
                     ),
                   ),
@@ -83,23 +84,25 @@ class CustomContainerWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: 150.w,
+                        width: 180.w,
                         child: Text(
-                          musicModel.title ,
+                          musicModel.title,
                           style: AppTextStyles.body16w4,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
                         ),
                       ),
                       SizedBox(
                         height: 6.h,
                       ),
                       SizedBox(
-                        width: 150.w,
+                        width: 180.w,
                         child: Text(
                           musicModel.artist ?? "unknown",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
                           style: AppTextStyles.body16w4.copyWith(
                             color: Colors.white.withOpacity(0.5),
                           ),
@@ -112,7 +115,7 @@ class CustomContainerWidget extends StatelessWidget {
               Container(
                 width: 40.w,
                 alignment: Alignment.center,
-                child:isActive
+                child: isActive
                     ? SvgPicture.asset(Assets.icons.soundWave)
                     : Text(
                         formatTime(musicModel),
@@ -151,7 +154,7 @@ class PlayAndPauseWidget extends StatelessWidget {
           color: Colors.white.withOpacity(.3),
         ),
         child: SvgPicture.asset(
-          onTap ? Assets.icons.playMusic : Assets.icons.pause,
+          onTap ? Assets.icons.pause : Assets.icons.playMusic,
           height: 10.w,
           width: 12.w,
           fit: BoxFit.scaleDown,
