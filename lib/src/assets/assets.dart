@@ -6,8 +6,7 @@ abstract class Assets {
 
   // ignore: library_private_types_in_public_api
   static _Images get images => const _Images();
-  // ignore: library_private_types_in_public_api
-  static _Musics get musics => const _Musics();
+  // ignore: library_private_types_in_public_api  
 }
 
 abstract class _AssetsHolder {
@@ -32,7 +31,7 @@ class _Icons extends _AssetsHolder {
   String get musicNote => '$basePath/music_note.svg';
   String get playMusic => '$basePath/play_music.svg';
   String get randomMusic => '$basePath/random_music.svg';
-  String get favorite => '$basePath/favoryte.svg';
+  String get favorite => '$basePath/favorite_heart.png';
   String get valume => '$basePath/valume.svg';
   String get valumeMute => '$basePath/valume_mute.svg';
 
@@ -41,17 +40,5 @@ class _Icons extends _AssetsHolder {
 
 class _Images extends _AssetsHolder {
   const _Images() : super('assets/images');
-  String get pictureMusic => '$basePath/picture_music.png';
-  String get secondMusic => '$basePath/second_music.png';
-  String get thirdMusic => '$basePath/third_music.png';
-  String get fourthMusic => '$basePath/fourth_music.png';
-  String get fivethMusic => '$basePath/fiveth_music.png';
-  String get sixthMusic => '$basePath/sixth_music.png';
-  String get musicCardPicture => '$basePath/music_card_picture.png';
-}
-
-class _Musics extends _AssetsHolder {
-  const _Musics() : super('assets/music');
-
-  String get serenaSafari => '$basePath/serena_safari_remix.mp3';
+  String get musicImageBackground => '$basePath/music_image_background.png';  
 }

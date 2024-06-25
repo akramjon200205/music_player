@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:music_player/src/deleting_music/presentation/cubit/deleting_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/cubit/music_playlist_cubit.dart';
 import 'package:music_player/src/my_playlist/presentation/pages/my_playlist.dart';
 
@@ -16,8 +17,15 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: (context, child) {
-        return BlocProvider<MusicPlaylistCubit>(
-          create: (context) => MusicPlaylistCubit(),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => MusicPlaylistCubit(),
+            ),
+            BlocProvider(
+              create: (context) => DeletingMusicCubit(),
+            ),
+          ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             home: child,
@@ -25,6 +33,6 @@ class MyApp extends StatelessWidget {
         );
       },
       child: const MyPlayList(),
-    );  
+    );
   }
 }

@@ -17,8 +17,8 @@ class CustomOnTapIconWidget extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: SizedBox(
-        height: 28.w,
-        width: 28.w,
+        height: 35.w,
+        width: 35.w,
         child: IconButton(
           splashRadius: 14.r,
           padding: const EdgeInsets.all(0),
